@@ -1,0 +1,10 @@
+syntax: regexp
+^\.metadata/\.log$
+^\.metadata/\.lock$
+^\.metadata/\.plugins/org\.eclipse\.core\.resources/\.projects/.*/\.markers\.snap$
+^\.metadata/\.plugins/org\.eclipse\.core\.resources/\.projects/.*/\.syncinfo\.snap$
+^\.metadata/\.plugins/org\.eclipse\.core\.resources/\.history/.*
+^\.metadata/\.plugins/org\.eclipse\.core\.resources/.*/\.indexes/.*\.index$
+^\.metadata/\.plugins/org\.eclipse\.jdt\.core/.*\.index$
+^\.metadata/\.plugins/org\.eclipse\.ltk\.core\.refactoring/.*$
+
