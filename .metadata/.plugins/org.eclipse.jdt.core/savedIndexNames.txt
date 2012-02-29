@@ -1,0 +1,10 @@
+INDEX VERSION 1.126+Z:\projects\java\blkview\.metadata\.plugins\org.eclipse.jdt.core
+1801644793.index
+3606132248.index
+904894915.index
+3128641643.index
+3324400193.index
+1229269354.index
+2317924813.index
+2505802210.index
+3067676963.index
