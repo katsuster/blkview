@@ -39,6 +39,7 @@ public class AccessLogRW extends AccessLog {
 
 		try {
 			d.address = in.readLong();
+			d.size = in.readLong();
 		} catch (IOException ex) {
 			throw new IllegalStateException("I/O error.");
 		}

@@ -39,7 +39,7 @@ public class BlocksViewerMain {
 		//メインウインドウを作成する
 		frm_main = new JFrame();
 		frm_main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frm_main.setSize(640, 480);
+		frm_main.setSize(800, 480);
 
 		frm_main.add(scr_blocks);
 

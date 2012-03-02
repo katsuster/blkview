@@ -44,11 +44,11 @@ implements HistoryReceiver, ActionListener {
 	public BlocksPanel() {
 		super();
 
-		setSize(new Dimension(600, 480));
+		setSize(new Dimension(640, 480));
 		setPreferredSize(getSize());
 		setBackground(Color.WHITE);
 
-		setBlockCount(1800);
+		setBlockCount(2000);
 		setCapacity(65536);
 
 		setAreaSize(getWidth(), getHeight());
@@ -106,40 +106,48 @@ implements HistoryReceiver, ActionListener {
 		switch (log.getOp()) {
 		case LogType.READ:
 			//read
-			addReadAccessLog(log.getAddress());
+			addReadAccessLog(log.getAddress(), log.getSize());
 			break;
 		case LogType.WRITE:
 			//write
-			addWriteAccessLog(log.getAddress());
+			addWriteAccessLog(log.getAddress(), log.getSize());
 			break;
 		}
 	}
 
-	public void addReadAccessLog(long address) {
-		long p = address / block_size;
+	public void addReadAccessLog(long address, long size) {
+		long p_s = address / block_size;
+		long p_e = (address + size) / block_size;
+		long i;
 
-		if (p < 0 || getBlockCount() <= p) {
+		if (p_s < 0 || getBlockCount() <= p_e) {
 			throw new IllegalArgumentException(
-					String.format("address:%08x(block:%d) is illegal.", 
-							address, p));
+					String.format("address:%08x(block:%d-%d) is illegal.", 
+							address, p_s, p_e));
 		}
 
 		synchronized(this) {
-			block_hist_read[(int)p] = 0xff;
+			for (i = p_s; i < p_e + 1; i++) {
+				block_hist_read[(int)i] = 0xff;
+			}
 		}
 	}
 
-	public void addWriteAccessLog(long address) {
-		long p = address / block_size;
+	public void addWriteAccessLog(long address, long size) {
+		long p_s = address / block_size;
+		long p_e = (address + size) / block_size;
+		long i;
 
-		if (p < 0 || getBlockCount() <= p) {
+		if (p_s < 0 || getBlockCount() <= p_e) {
 			throw new IllegalArgumentException(
-					String.format("address:%08x(block:%d) is illegal.", 
-							address, p));
+					String.format("address:%08x(block:%d-%d) is illegal.", 
+							address, p_s, p_e));
 		}
 
 		synchronized(this) {
-			block_hist_write[(int)p] = 0xff;
+			for (i = p_s; i < p_e + 1; i++) {
+				block_hist_write[(int)i] = 0xff;
+			}
 		}
 	}
 
