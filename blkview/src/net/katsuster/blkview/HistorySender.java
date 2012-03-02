@@ -8,37 +8,16 @@ import java.net.*;
 
 /**
  * @author katsuhiro
- *
  */
 public class HistorySender implements Runnable {
-	private DataInputStream in;
+	String path;
 	private HistoryReceiver receiver;
-	
-	public HistorySender(String path, HistoryReceiver r) {
-		ServerSocket ss;
-		Socket s;
-		InputStream str;
-		
-		try {
-			ss = new ServerSocket(10001, 5);
-			s = ss.accept();
-			str = s.getInputStream();
-		} catch (IOException ex) {
-			throw new IllegalArgumentException(
-					"cannot bind to port '10001'.");
-		}/**/
-		
-		/*try {
-			str = new FileInputStream(path);
-		} catch (IOException ex) {
-			throw new IllegalArgumentException(
-					"cannot access to '" + path + "'.");
-		}/**/
-		
-		in = new DataInputStream(new BufferedInputStream(str));
+
+	public HistorySender(String p, HistoryReceiver r) {
+		path = p;
 		receiver = r;
 	}
-	
+
 	@Override
 	public void run() {
 		try {
@@ -48,31 +27,55 @@ public class HistorySender implements Runnable {
 			ex.printStackTrace(System.err);
 		}
 	}
-	
+
 	public void run_safe() throws IOException {
-		int op;
-		long capacity, address;
-		
-		capacity = in.readLong();
-		receiver.setCapacity(capacity);
-		
+		ServerSocket ss;
+		Socket s;
+		InputStream str;
+		DataInputStream in;
+		AccessLogOpen logh = new AccessLogOpen();
+		AccessLogRW log = new AccessLogRW();
+
+		try {
+			ss = new ServerSocket(10001, 5);
+		} catch (IOException ex) {
+			throw new IllegalArgumentException(
+					"cannot bind to port '10001'.");
+		}/**/
+
 		while (true) {
 			try {
-				op = in.readInt();
-				address = in.readLong();
-			} catch (EOFException ex) {
-				break;
-			}
-			
-			switch (op) {
-			case 1:
-				//read
-				receiver.addReadHistory(address);
-				break;
-			case 2:
-				//write
-				receiver.addWriteHistory(address);
-				break;
+				s = ss.accept();
+				str = s.getInputStream();
+				System.out.println("accepted.");
+			} catch (IOException ex) {
+				throw new IllegalArgumentException(
+						"cannot accept.");
+			}/**/
+
+			/*try {
+				str = new FileInputStream(path);
+			} catch (IOException ex) {
+				throw new IllegalArgumentException(
+						"cannot access to '" + path + "'.");
+			}/**/
+
+			in = new DataInputStream(new BufferedInputStream(str));
+
+			logh.read(in);
+			receiver.setCapacity(logh.getCapacity());
+			System.out.println(
+					"capacity " + (logh.getCapacity() / 1048576) + "MB" + 
+							"(" + logh.getCapacity() + ")");
+
+			while (true) {
+				try {
+					log.read(in);
+				} catch (IllegalStateException ex) {
+					break;
+				}
+
+				receiver.addAccessLog(log);
 			}
 		}
 	}

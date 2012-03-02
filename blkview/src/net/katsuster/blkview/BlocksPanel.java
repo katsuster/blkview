@@ -4,16 +4,16 @@
 package net.katsuster.blkview;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+import java.awt.event.*;
 import javax.swing.*;
+
+import net.katsuster.blkview.AccessLog.*;
 
 /**
  * @author katsuhiro
  */
 public class BlocksPanel extends JComponent 
-		implements HistoryReceiver, ActionListener {
+implements HistoryReceiver, ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	//‘S‘Ì‚Ì—e—Ê
@@ -63,17 +63,17 @@ public class BlocksPanel extends JComponent
 	public long getCapacity() {
 		return capacity;
 	}
-	
+
 	public void setCapacity(long n) {
 		if (n < 0) {
 			throw new IllegalArgumentException(
 					"capacity(" + n + ") is negative.");
 		}
-		
+
 		capacity = n;
 		setBlockSize(getCapacity() / (getBlockCount() - 1));
 	}
-	
+
 	public int getBlockCount() {
 		return block_count;
 	}
@@ -102,10 +102,23 @@ public class BlocksPanel extends JComponent
 		block_size = n;
 	}
 
-	public void addReadHistory(long address) {
+	public void addAccessLog(AccessLogRW log) {
+		switch (log.getOp()) {
+		case LogType.READ:
+			//read
+			addReadAccessLog(log.getAddress());
+			break;
+		case LogType.WRITE:
+			//write
+			addWriteAccessLog(log.getAddress());
+			break;
+		}
+	}
+
+	public void addReadAccessLog(long address) {
 		long p = address / block_size;
 
-		if (p >= getBlockCount()) {
+		if (p < 0 || getBlockCount() <= p) {
 			throw new IllegalArgumentException(
 					String.format("address:%08x(block:%d) is illegal.", 
 							address, p));
@@ -116,10 +129,10 @@ public class BlocksPanel extends JComponent
 		}
 	}
 
-	public void addWriteHistory(long address) {
+	public void addWriteAccessLog(long address) {
 		long p = address / block_size;
 
-		if (p >= getBlockCount()) {
+		if (p < 0 || getBlockCount() <= p) {
 			throw new IllegalArgumentException(
 					String.format("address:%08x(block:%d) is illegal.", 
 							address, p));
