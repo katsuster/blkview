@@ -5,7 +5,7 @@ import javax.swing.*;
 
 /**
  * <p>
- * メインウインドウを作成するクラス。
+ * メインウインドウを作成するクラスです。
  * </p>
  * 
  * @author katsuhiro
@@ -26,14 +26,15 @@ public class BlocksViewerMain {
 		if (args.length < 1) {
 			System.err.println(
 					"usage:\n" + 
-					"bv filename");
+					"blkview logfilename");
 			return;
 		}
 
-		//アクセスログ表示領域を作成する
+
+		//アクセスログ表示領域を作成します
 		pnl_blocks = new LogRendererPanel();
 
-		//スクロール領域を作成する
+		//スクロール領域を作成します
 		scr_blocks = new JScrollPane(pnl_blocks);
 		scr_blocks.setHorizontalScrollBarPolicy(
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -41,17 +42,17 @@ public class BlocksViewerMain {
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
 
-		//表示設定領域を作成する
+		//表示設定領域を作成します
 		pnl_settings = new JPanel();
 
 
-		//分割領域を作成する
+		//分割領域を作成します
 		spl_main = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false);
 		spl_main.setDividerSize(4);
 		spl_main.setLeftComponent(scr_blocks);
 		spl_main.setRightComponent(pnl_settings);
 
-		//メインウインドウを作成する
+		//メインウインドウを作成します
 		frm_main = new JFrame();
 		frm_main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frm_main.setSize(800, 480);
@@ -60,7 +61,7 @@ public class BlocksViewerMain {
 
 		frm_main.setVisible(true);
 
-		//履歴読み出しスレッドを作成する
+		//履歴読み出しスレッドを作成します
 		sender_inner = new LogReader(args[0], pnl_blocks);
 		sender = new Thread(sender_inner);
 		sender.start();

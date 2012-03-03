@@ -5,7 +5,7 @@ import java.io.*;
 
 /**
  * <p>
- * アクセスログの開始をあらわすクラス。
+ * アクセスログの開始をあらわすクラスです。
  * </p>
  * 
  * @author katsuhiro
@@ -22,7 +22,7 @@ public class AccessLogOpen extends AccessLog {
 
 	/**
 	 * <p>
-	 * ブロックデバイスの容量を取得する。
+	 * ブロックデバイスの容量を取得します。
 	 * </p>
 	 * 
 	 * @return 容量
@@ -39,7 +39,7 @@ public class AccessLogOpen extends AccessLog {
 	/**
 	 * <p>
 	 * バイトストリームからログを読み込み、
-	 * アクセスログの開始に設定する。
+	 * アクセスログの開始に設定します。
 	 * </p>
 	 * 
 	 * @param in バイトストリーム

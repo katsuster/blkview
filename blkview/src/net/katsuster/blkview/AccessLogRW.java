@@ -5,7 +5,7 @@ import java.io.*;
 
 /**
  * <p>
- * Read/Write のアクセスログをあらわすクラス。
+ * Read/Write のアクセスログをあらわすクラスです。
  * </p>
  * 
  * @author katsuhiro
@@ -52,7 +52,7 @@ public class AccessLogRW extends AccessLog {
 	/**
 	 * <p>
 	 * バイトストリームからログを読み込み、
-	 * Read/Write のアクセスログに設定する。
+	 * Read/Write のアクセスログに設定します。
 	 * </p>
 	 * 
 	 * @param in バイトストリーム

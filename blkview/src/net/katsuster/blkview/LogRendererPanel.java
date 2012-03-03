@@ -9,7 +9,7 @@ import net.katsuster.blkview.AccessLog.*;
 
 /**
  * <p>
- * アクセスログの 2D描画、表示を行うクラス。
+ * アクセスログの 2D描画、表示を行うクラスです。
  * </p>
  * 
  * @author katsuhiro
@@ -18,16 +18,10 @@ public class LogRendererPanel extends JComponent
 implements LogRenderer, ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	//全体の容量
-	private long capacity;
-	//ブロックの数
-	private int block_count;
-	//ブロックのバイト数
-	private long block_size;
-	//ブロックの読み込みアクセス履歴
-	private int[] block_hist_read;
-	//ブロックの書き込みアクセス履歴
-	private int[] block_hist_write;
+	//読み込みアクセスログの履歴
+	LogHistories hist_read;
+	//書き込みアクセスログの履歴
+	LogHistories hist_write;
 
 	//全体の描画領域の最大値
 	private Dimension content_area;
@@ -50,8 +44,8 @@ implements LogRenderer, ActionListener {
 		setPreferredSize(getSize());
 		setBackground(Color.WHITE);
 
-		setBlockCount(2000);
-		setCapacity(65536);
+		hist_read = new LogHistories(2000, 65536);
+		hist_write = new LogHistories(2000, 66536);
 
 		setAreaSize(getWidth(), getHeight());
 		setContentMargin(5, 5, 5, 5);
@@ -62,111 +56,28 @@ implements LogRenderer, ActionListener {
 		startAnimation();
 	}
 
-	public long getCapacity() {
-		return capacity;
+	@Override
+	public void setBlockCount(long n) {
+		hist_read.setCapacity(n);
+		hist_write.setCapacity(n);
 	}
 
+	@Override
 	public void setCapacity(long n) {
-		if (n < 0) {
-			throw new IllegalArgumentException(
-					"capacity(" + n + ") is negative.");
-		}
-
-		capacity = n;
-		setBlockSize(getCapacity() / (getBlockCount() - 1));
-	}
-
-	public int getBlockCount() {
-		return block_count;
-	}
-
-	public void setBlockCount(int n) {
-		if (n < 0) {
-			throw new IllegalArgumentException(
-					"block count(" + n + ") is negative.");
-		}
-
-		block_count = n;
-		block_hist_read = new int[block_count];
-		block_hist_write = new int[block_count];
-	}
-
-	public long getBlockSize() {
-		return block_size;
-	}
-
-	protected void setBlockSize(long n) {
-		if (n < 0) {
-			throw new IllegalArgumentException(
-					"block size(" + n + ") is negative.");
-		}
-
-		block_size = n;
+		hist_read.setCapacity(n);
+		hist_write.setCapacity(n);
 	}
 
 	public void addAccessLog(AccessLogRW log) {
 		switch (log.getOp()) {
 		case LogType.READ:
 			//read
-			addReadAccessLog(log.getAddress(), log.getSize());
+			hist_read.addAccessLog(log.getAddress(), log.getSize());
 			break;
 		case LogType.WRITE:
 			//write
-			addWriteAccessLog(log.getAddress(), log.getSize());
+			hist_write.addAccessLog(log.getAddress(), log.getSize());
 			break;
-		}
-	}
-
-	public void addReadAccessLog(long address, long size) {
-		long p_s = address / block_size;
-		long p_e = (address + size) / block_size;
-		long i;
-
-		if (p_s < 0 || getBlockCount() <= p_e) {
-			throw new IllegalArgumentException(
-					String.format("address:%08x(block:%d-%d) is illegal.", 
-							address, p_s, p_e));
-		}
-
-		synchronized(this) {
-			for (i = p_s; i < p_e + 1; i++) {
-				block_hist_read[(int)i] = 0xff;
-			}
-		}
-	}
-
-	public void addWriteAccessLog(long address, long size) {
-		long p_s = address / block_size;
-		long p_e = (address + size) / block_size;
-		long i;
-
-		if (p_s < 0 || getBlockCount() <= p_e) {
-			throw new IllegalArgumentException(
-					String.format("address:%08x(block:%d-%d) is illegal.", 
-							address, p_s, p_e));
-		}
-
-		synchronized(this) {
-			for (i = p_s; i < p_e + 1; i++) {
-				block_hist_write[(int)i] = 0xff;
-			}
-		}
-	}
-
-	public void forgetHistories() {
-		long i;
-		int t;
-
-		synchronized(this) {
-			for (i = 0; i < getBlockCount(); i++) {
-				t = block_hist_read[(int)i];
-				t = Math.max(t - 10, 0);
-				block_hist_read[(int)i] = t;
-
-				t = block_hist_write[(int)i];
-				t = Math.max(t - 10, 0);
-				block_hist_write[(int)i] = t;
-			}
 		}
 	}
 
@@ -226,25 +137,30 @@ implements LogRenderer, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//お試しさん
-		//addReadHistory((long)(getBlockCount() * getBlockSize() * Math.random()));
-		//addWriteHistory((long)(getBlockCount() * getBlockSize() * Math.random()));
+		//アクセス履歴を忘れさせます
+		hist_read.forgetHistories();
+		hist_write.forgetHistories();
 
-		//アクセス履歴を忘れさせる
-		forgetHistories();
-
-		//再描画する
+		//再描画します
 		repaint();
 	}
 
 	@Override
 	public void paint(Graphics g) {
+		int[] hr, hw;
 		Dimension d_ba;
 		Rectangle r_c, r_bc;
 		int mx, my, x, y, bx, by;
-		long i;
+		int i;
 
 		super.paint(g);
+
+		hr = hist_read.getHistories();
+		hw = hist_write.getHistories();
+		if (hr.length != hw.length) {
+			//更新中と思われるため、何もしない
+			return;
+		}
 
 		//d_c = getAreaSize();
 		r_c = getContentBounds();
@@ -252,7 +168,7 @@ implements LogRenderer, ActionListener {
 		r_bc = getBlockContentBounds();
 		mx = r_c.width / d_ba.width;
 		my = r_c.height / d_ba.height;
-		for (i = 0; i < getBlockCount(); i++) {
+		for (i = 0; i < hr.length; i++) {
 			x = (int)(i % mx);
 			y = (int)(i / mx);
 			if (y > my) {
@@ -262,14 +178,15 @@ implements LogRenderer, ActionListener {
 
 			bx = r_c.x + x * d_ba.width;
 			by = r_c.y + y * d_ba.height;
+
 			//枠
 			g.setColor(Color.GRAY);
 			g.drawRect(bx + r_bc.x, by + r_bc.y, 
 					r_bc.width, r_bc.height);
 			//中身
 			g.setColor(new Color(
-					255 - block_hist_read[(int)i] & 0xff, 
-					255 - block_hist_write[(int)i] & 0xff, 
+					255 - hr[i] & 0xff, 
+					255 - hw[i] & 0xff, 
 					255));
 			g.fillRect(bx + r_bc.x + 1, by + r_bc.y + 1, 
 					r_bc.width - 1, r_bc.height - 1);
