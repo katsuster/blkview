@@ -16,9 +16,9 @@ public class BlocksViewerMain {
 		JFrame frm_main;
 		JSplitPane spl_main;
 		JScrollPane scr_blocks;
-		BlocksPanel pnl_blocks;
+		LogRendererPanel pnl_blocks;
 		JComponent pnl_settings;
-		HistorySender sender_inner;
+		LogReader sender_inner;
 		Thread sender;
 
 		if (args.length < 1) {
@@ -29,7 +29,7 @@ public class BlocksViewerMain {
 		}
 
 		//アクセスログ表示領域を作成する
-		pnl_blocks = new BlocksPanel();
+		pnl_blocks = new LogRendererPanel();
 
 		//スクロール領域を作成する
 		scr_blocks = new JScrollPane(pnl_blocks);
@@ -59,7 +59,7 @@ public class BlocksViewerMain {
 		frm_main.setVisible(true);
 
 		//履歴読み出しスレッドを作成する
-		sender_inner = new HistorySender(args[0], pnl_blocks);
+		sender_inner = new LogReader(args[0], pnl_blocks);
 		sender = new Thread(sender_inner);
 		sender.start();
 	}

@@ -9,11 +9,11 @@ import java.net.*;
 /**
  * @author katsuhiro
  */
-public class HistorySender implements Runnable {
+public class LogReader implements Runnable {
 	String path;
-	private HistoryReceiver receiver;
+	private LogRenderer receiver;
 
-	public HistorySender(String p, HistoryReceiver r) {
+	public LogReader(String p, LogRenderer r) {
 		path = p;
 		receiver = r;
 	}

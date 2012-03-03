@@ -12,8 +12,8 @@ import net.katsuster.blkview.AccessLog.*;
 /**
  * @author katsuhiro
  */
-public class BlocksPanel extends JComponent 
-implements HistoryReceiver, ActionListener {
+public class LogRendererPanel extends JComponent 
+implements LogRenderer, ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	//全体の容量
@@ -41,7 +41,7 @@ implements HistoryReceiver, ActionListener {
 	//履歴を徐々に忘れさせていくタイマー
 	private Timer leaper;
 
-	public BlocksPanel() {
+	public LogRendererPanel() {
 		super();
 
 		setSize(new Dimension(640, 480));
