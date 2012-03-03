@@ -1,11 +1,13 @@
-/**
- * 
- */
+
 package net.katsuster.blkview;
 
 import javax.swing.*;
 
 /**
+ * <p>
+ * メインウインドウを作成するクラス。
+ * </p>
+ * 
  * @author katsuhiro
  */
 public class BlocksViewerMain {

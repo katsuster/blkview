@@ -1,21 +1,24 @@
-/**
- * 
- */
+
 package net.katsuster.blkview;
 
 import java.io.*;
 import java.net.*;
 
 /**
+ * <p>
+ * アクセスログを読み取り、レンダラに送るクラス。
+ * 独自のスレッドで動作する。
+ * </p>
+ * 
  * @author katsuhiro
  */
 public class LogReader implements Runnable {
-	String path;
-	private LogRenderer receiver;
+	//private String path;
+	private LogRenderer renderer;
 
 	public LogReader(String p, LogRenderer r) {
-		path = p;
-		receiver = r;
+		//path = p;
+		renderer = r;
 	}
 
 	@Override
@@ -28,6 +31,13 @@ public class LogReader implements Runnable {
 		}
 	}
 
+	/**
+	 * <p>
+	 * IOException のキャッチをさぼるための run() メソッド。
+	 * </p>
+	 * 
+	 * @throws IOException
+	 */
 	public void run_safe() throws IOException {
 		ServerSocket ss;
 		Socket s;
@@ -63,7 +73,7 @@ public class LogReader implements Runnable {
 			in = new DataInputStream(new BufferedInputStream(str));
 
 			logh.read(in);
-			receiver.setCapacity(logh.getCapacity());
+			renderer.setCapacity(logh.getCapacity());
 			System.out.println(
 					"capacity " + (logh.getCapacity() / 1048576) + "MB" + 
 							"(" + logh.getCapacity() + ")");
@@ -75,7 +85,7 @@ public class LogReader implements Runnable {
 					break;
 				}
 
-				receiver.addAccessLog(log);
+				renderer.addAccessLog(log);
 			}
 		}
 	}

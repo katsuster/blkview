@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package net.katsuster.blkview;
 
 import java.awt.*;
@@ -10,6 +8,10 @@ import javax.swing.*;
 import net.katsuster.blkview.AccessLog.*;
 
 /**
+ * <p>
+ * アクセスログの 2D描画、表示を行うクラス。
+ * </p>
+ * 
  * @author katsuhiro
  */
 public class LogRendererPanel extends JComponent 
