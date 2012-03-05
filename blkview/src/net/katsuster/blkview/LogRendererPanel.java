@@ -57,9 +57,9 @@ implements LogRenderer, ActionListener {
 	}
 
 	@Override
-	public void setBlockCount(long n) {
-		hist_read.setCapacity(n);
-		hist_write.setCapacity(n);
+	public void setBlockCount(int n) {
+		hist_read.setBlockCount(n);
+		hist_write.setBlockCount(n);
 	}
 
 	@Override
