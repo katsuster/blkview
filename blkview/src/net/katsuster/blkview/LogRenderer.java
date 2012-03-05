@@ -9,8 +9,9 @@ package net.katsuster.blkview;
  * @author katsuhiro
  */
 public interface LogRenderer {
-	public void setBlockCount(int n);
-	public void setCapacity(long n);
+	public void setReadLogStorage(LogStorage s);
+	public void setWriteLogStorage(LogStorage s);
 
-	public void addAccessLog(AccessLogRW log);
+	public void startRendering();
+	public void stopRendering();
 }

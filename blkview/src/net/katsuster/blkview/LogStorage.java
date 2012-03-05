@@ -8,9 +8,9 @@ package net.katsuster.blkview;
  * </p>
  * 
  * <p>
- * インスタンス生成時に setBlockCount() でブロック数を、
- * setCapacity() で全体の容量を指定します。
- * 1 ブロックの大きさは (全体の容量) / (ブロック数) に設定され、
+ * インスタンス生成時に setGeometry() でブロック数と、
+ * 全体の容量を指定します。
+ * 1 ブロックの大きさは (全体の容量) / (ブロック数) + 1 に設定され、
  * getBlockSize() で取得可能です。
  * </p>
  * 
@@ -26,7 +26,7 @@ package net.katsuster.blkview;
  * 
  * @author katsuhiro
  */
-public class LogHistories {
+public class LogStorage {
 	//全体の容量
 	private long capacity, capacity_real;
 	//ブロックの数
@@ -41,7 +41,7 @@ public class LogHistories {
 	 * ブロック数 1、容量 1 バイトのアクセスログ履歴を作成します。
 	 * </p>
 	 */
-	public LogHistories() {
+	public LogStorage() {
 		this(1, 1);
 	}
 
@@ -53,37 +53,8 @@ public class LogHistories {
 	 * @param count ブロック数
 	 * @param cap 容量
 	 */
-	public LogHistories(int count, long cap) {
-		setBlockCount(count);
-		setCapacity(cap);
-	}
-
-	/**
-	 * <p>
-	 * 全体の容量（バイト数）を取得します。
-	 * </p>
-	 * 
-	 * @return 全体の容量
-	 */
-	public long getCapacity() {
-		return capacity_real;
-	}
-
-	/**
-	 * <p>
-	 * 全体の容量（バイト数）を設定します。
-	 * </p>
-	 * 
-	 * @param n 全体の容量
-	 */
-	public void setCapacity(long n) {
-		if (n < 0) {
-			throw new IllegalArgumentException(
-					"capacity(" + n + ") is negative.");
-		}
-
-		capacity = n;
-		resizeHistories();
+	public LogStorage(int count, long cap) {
+		setGeometry(count, cap);
 	}
 
 	/**
@@ -100,17 +71,74 @@ public class LogHistories {
 	/**
 	 * <p>
 	 * ブロック数を設定します。
+	 * ブロックサイズは適切な値に再設定されます。
 	 * </p>
 	 * 
-	 * @param n ブロック数
+	 * @param cnt ブロック数
 	 */
-	public void setBlockCount(int n) {
-		if (n < 0) {
+	public void setBlockCount(int cnt) {
+		if (cnt <= 0) {
 			throw new IllegalArgumentException(
-					"block count(" + n + ") is negative.");
+					"block count(" + cnt + ") is zero or negative.");
 		}
 
-		block_count = n;
+		block_count = cnt;
+
+		resizeHistories();
+	}
+
+	/**
+	 * <p>
+	 * 全体の容量（バイト数）を取得します。
+	 * </p>
+	 * 
+	 * @return 全体の容量
+	 */
+	public long getCapacity() {
+		return capacity_real;
+	}
+
+	/**
+	 * <p>
+	 * 全体の容量（バイト数）を設定します。
+	 * ブロックサイズは適切な値に再設定されます。
+	 * </p>
+	 * 
+	 * @param cap 全体の容量
+	 */
+	public void setCapacity(long cap) {
+		if (cap < 0) {
+			throw new IllegalArgumentException(
+					"capacity(" + cap + ") is negative.");
+		}
+
+		capacity = cap;
+
+		resizeHistories();
+	}
+
+	/**
+	 * <p>
+	 * ブロック数と、全体の容量（バイト数）を設定します。
+	 * ブロックサイズは適切な値に再設定されます。
+	 * </p>
+	 * 
+	 * @param cnt ブロック数
+	 * @param cap 全体の容量
+	 */
+	public void setGeometry(int cnt, long cap) {
+		if (cnt <= 0) {
+			throw new IllegalArgumentException(
+					"block count(" + cnt + ") is zero or negative.");
+		}
+		if (cap < 0) {
+			throw new IllegalArgumentException(
+					"capacity(" + cap + ") is negative.");
+		}
+
+		block_count = cnt;
+		capacity = cap;
+
 		resizeHistories();
 	}
 
