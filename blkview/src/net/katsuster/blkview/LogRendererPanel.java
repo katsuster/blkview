@@ -9,7 +9,7 @@ import net.katsuster.blkview.AccessLog.*;
 
 /**
  * <p>
- * アクセスログの 2D描画、表示を行うクラスです。
+ * ストレージに保持されているアクセスログの 2D描画、表示を行うクラスです。
  * </p>
  * 
  * @author katsuhiro

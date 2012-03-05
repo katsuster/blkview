@@ -2,6 +2,10 @@
 package net.katsuster.blkview;
 
 /**
+ * <p>
+ * ストレージに保持されているアクセスログの表示を行うインタフェースです。
+ * </p>
+ * 
  * @author katsuhiro
  */
 public interface LogRenderer {
