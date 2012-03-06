@@ -47,7 +47,7 @@ public class BlocksViewerMain {
 
 
 		//•\¦İ’è—Ìˆæ‚ğì¬‚µ‚Ü‚·
-		pnl_settings = new JPanel();
+		pnl_settings = new RendererSettingPanel();
 
 
 		//•ªŠ„—Ìˆæ‚ğì¬‚µ‚Ü‚·

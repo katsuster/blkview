@@ -12,7 +12,7 @@ import javax.swing.*;
  * 
  * @author katsuhiro
  */
-public class LogRendererPanel extends JComponent 
+public class LogRendererPanel extends JPanel 
 implements LogRenderer, ActionListener {
 	private static final long serialVersionUID = 1L;
 
@@ -21,12 +21,12 @@ implements LogRenderer, ActionListener {
 	//書き込みアクセスログの履歴
 	private LogStorage storage_w;
 
-	//全体の描画領域の最大値
+	//全体の描画領域の大きさ
 	private Dimension content_area;
 	//全体の描画領域
-	//（コンポーネントの描画領域の左上を（0, 0）とする）
+	//（全体の描画領域の左上を（0, 0）とする）
 	private Rectangle content_rect;
-	//ブロックの描画領域の最大値
+	//ブロックの描画領域の大きさ
 	private Dimension block_area;
 	//ブロックを描画する領域
 	//（ブロックの描画領域の左上を (0, 0) とする）
@@ -44,11 +44,12 @@ implements LogRenderer, ActionListener {
 
 		setReadLogStorage(s_r);
 		setWriteLogStorage(s_w);
+		setBlockCount(5500);
 
 		setAreaSize(getWidth(), getHeight());
 		setContentMargin(5, 5, 5, 5);
-		setBlockAreaSize(8, 16);
-		setBlockContentMargin(1, 2, 2, 3);
+		setBlockAreaSize(5, 9);
+		setBlockContentMargin(1, 1, 1, 1);
 
 		leaper = new Timer(100, this);
 		startRendering();
