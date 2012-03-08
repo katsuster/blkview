@@ -90,17 +90,33 @@ implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		boolean correct;
+		int count;
 		int width, height;
 
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_COUNT)) {
-			System.out.println("count");
+			correct = true;
+			count = 0;
+
+			try {
+				count = Integer.valueOf(txt_count.getText());
+			} catch (NumberFormatException ex) {
+				//do nothing
+			}
+			if (count <= 0 || 1000000 < count) {
+				correct = false;
+				txt_count.setForeground(Color.RED);
+			} else {
+				txt_count.setForeground(Color.BLACK);
+			}
+
+			if (correct) {
+				renderer.setBlockCount(count);
+			}
 		}
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_CAPACITY)) {
 			System.out.println("cap");
 		}
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_SIZE)) {
-			System.out.println("size");
-
 			correct = true;
 			width = 0;
 			height = 0;
