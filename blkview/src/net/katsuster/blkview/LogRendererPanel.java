@@ -5,30 +5,28 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import net.katsuster.blkview.AccessLog.*;
-
 /**
  * <p>
- * アクセスログの 2D描画、表示を行うクラスです。
+ * ストレージに保持されているアクセスログの 2D描画、表示を行うクラスです。
  * </p>
  * 
  * @author katsuhiro
  */
-public class LogRendererPanel extends JComponent 
+public class LogRendererPanel extends JPanel 
 implements LogRenderer, ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	//読み込みアクセスログの履歴
-	LogHistories hist_read;
+	private LogStorage storage_r;
 	//書き込みアクセスログの履歴
-	LogHistories hist_write;
+	private LogStorage storage_w;
 
-	//全体の描画領域の最大値
+	//全体の描画領域の大きさ
 	private Dimension content_area;
 	//全体の描画領域
-	//（コンポーネントの描画領域の左上を（0, 0）とする）
+	//（全体の描画領域の左上を（0, 0）とする）
 	private Rectangle content_rect;
-	//ブロックの描画領域の最大値
+	//ブロックの描画領域の大きさ
 	private Dimension block_area;
 	//ブロックを描画する領域
 	//（ブロックの描画領域の左上を (0, 0) とする）
@@ -37,66 +35,109 @@ implements LogRenderer, ActionListener {
 	//履歴を徐々に忘れさせていくタイマー
 	private Timer leaper;
 
-	public LogRendererPanel() {
+	public LogRendererPanel(LogStorage s_r, LogStorage s_w) {
 		super();
 
 		setSize(new Dimension(640, 480));
 		setPreferredSize(getSize());
 		setBackground(Color.WHITE);
 
-		hist_read = new LogHistories(2000, 65536);
-		hist_write = new LogHistories(2000, 66536);
+		setReadLogStorage(s_r);
+		setWriteLogStorage(s_w);
+		setBlockCount(5500);
 
 		setAreaSize(getWidth(), getHeight());
 		setContentMargin(5, 5, 5, 5);
-		setBlockAreaSize(8, 16);
-		setBlockContentMargin(1, 2, 2, 3);
+		setBlockAreaSize(5, 9);
+		setBlockContentMargin(1, 1, 1, 1);
 
 		leaper = new Timer(100, this);
-		startAnimation();
+		startRendering();
 	}
 
 	@Override
-	public void setBlockCount(long n) {
-		hist_read.setCapacity(n);
-		hist_write.setCapacity(n);
+	public void setReadLogStorage(LogStorage s) {
+		storage_r = s;
 	}
 
 	@Override
-	public void setCapacity(long n) {
-		hist_read.setCapacity(n);
-		hist_write.setCapacity(n);
+	public void setWriteLogStorage(LogStorage s) {
+		storage_w = s;
 	}
 
-	public void addAccessLog(AccessLogRW log) {
-		switch (log.getOp()) {
-		case LogType.READ:
-			//read
-			hist_read.addAccessLog(log.getAddress(), log.getSize());
-			break;
-		case LogType.WRITE:
-			//write
-			hist_write.addAccessLog(log.getAddress(), log.getSize());
-			break;
-		}
+	public void setBlockCount(int n) {
+		storage_r.setBlockCount(n);
+		storage_w.setBlockCount(n);
 	}
 
 	public Dimension getAreaSize() {
 		return (Dimension)content_area.clone();
 	}
 
+	/**
+	 * <p>
+	 * 全体の描画領域の境界の大きさを指定します。
+	 * </p>
+	 * 
+	 * @param width 全体の描画領域の境界の幅
+	 * @param height 全体の描画領域の境界の高さ
+	 */
 	public void setAreaSize(int width, int height) {
 		content_area = new Dimension(width, height);
 	}
 
+	/**
+	 * <p>
+	 * 全体の描画領域を取得します。
+	 * </p>
+	 * 
+	 * <p>
+	 * 描画開始位置は、
+	 * 全体の描画領域の境界の（setAreaSize() で指定する領域）
+	 * 左上を (0, 0) とした、相対座標です。
+	 * </p>
+	 * 
+	 * @return 全体の描画領域
+	 */
 	public Rectangle getContentBounds() {
 		return (Rectangle)content_rect.clone();
 	}
 
+	/**
+	 * <p>
+	 * 開始座標、幅、高さから、全体の描画領域を設定します。
+	 * </p>
+	 * 
+	 * <p>
+	 * 描画開始位置は、
+	 * 全体の描画領域の境界の（setAreaSize() で指定する領域）
+	 * 左上を (0, 0) とした、相対座標です。
+	 * </p>
+	 * 
+	 * @param x 全体の描画領域の開始 X 座標
+	 * @param y 全体の描画領域の開始 Y 座標
+	 * @param width 全体の描画領域の幅
+	 * @param height 全体の描画領域の高さ
+	 */
 	public void setContentBounds(int x, int y, int width, int height) {
 		content_rect = new Rectangle(x, y, width, height);
 	}
 
+	/**
+	 * <p>
+	 * マージンの大きさから、全体の描画領域を設定します。
+	 * </p>
+	 * 
+	 * <p>
+	 * 全体の描画領域は、
+	 * 全体の描画領域の境界から、マージンを除いた領域となります。
+	 * </p>
+	 * 
+	 * @param left マージンの左側幅
+	 * @param top マージンの上側高さ
+	 * @param right マージンの右側幅
+	 * @param bottom マージンの下側高さ
+	 */
 	public void setContentMargin(int left, int top, int right, int bottom) {
 		Dimension d = getAreaSize();
 
@@ -104,18 +145,69 @@ implements LogRenderer, ActionListener {
 				d.width - left - right, d.height - top - bottom);
 	}
 
+	/**
+	 * <p>
+	 * 1ブロックの描画領域の境界の大きさを取得します。
+	 * </p>
+	 * 
+	 * @return 1ブロックの描画領域の境界の大きさ
+	 */
 	public Dimension getBlockAreaSize() {
 		return (Dimension)block_area.clone();
 	}
 
+	/**
+	 * <p>
+	 * 1ブロックの描画領域の境界の大きさを取得します。
+	 * </p>
+	 * 
+	 * @param width 1ブロックの描画領域の境界の幅
+	 * @param height 1ブロックの描画領域の境界の高さ
+	 */
 	public void setBlockAreaSize(int width, int height) {
+		if (width <= 0 || height <= 0) {
+			throw new IllegalArgumentException(
+					"width(" + width + ") or " +
+					"height(" + height + ") is zero or negative.");
+
+		}
+
 		block_area = new Dimension(width, height);
 	}
 
+	/**
+	 * <p>
+	 * 1ブロックの描画領域を取得します。
+	 * </p>
+	 * 
+	 * <p>
+	 * 描画開始位置は、
+	 * 1ブロックの描画領域の境界の（setBlockAreaSize() で指定する領域）
+	 * 左上を (0, 0) とした相対座標です。
+	 * </p>
+	 * 
+	 * @return 1ブロックの描画領域
+	 */
 	public Rectangle getBlockContentBounds() {
 		return (Rectangle)block_rect.clone();
 	}
 
+	/**
+	 * <p>
+	 * 開始座標、幅、高さから、1ブロックの描画領域を設定します。
+	 * </p>
+	 * 
+	 * <p>
+	 * 描画開始位置は、
+	 * 1ブロックの描画領域の境界の（setBlockAreaSize() で指定する領域）
+	 * 左上を (0, 0) とした相対座標です。
+	 * </p>
+	 * 
+	 * @param x 1ブロックの描画領域の開始 X 座標
+	 * @param y 1ブロックの描画領域の開始 Y 座標
+	 * @param width 1ブロックの描画領域の幅
+	 * @param height 1ブロックの描画領域の高さ
+	 */
 	public void setBlockContentBounds(int x, int y, int width, int height) {
 		block_rect = new Rectangle(x, y, width, height);
 	}
@@ -127,19 +219,21 @@ implements LogRenderer, ActionListener {
 				d.width - left - right, d.height - top - bottom);
 	}
 
-	public void startAnimation() {
+	@Override
+	public void startRendering() {
 		leaper.start();
 	}
 
-	public void stopAnimation() {
+	@Override
+	public void stopRendering() {
 		leaper.stop();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		//アクセス履歴を忘れさせます
-		hist_read.forgetHistories();
-		hist_write.forgetHistories();
+		storage_r.forgetHistories();
+		storage_w.forgetHistories();
 
 		//再描画します
 		repaint();
@@ -155,8 +249,8 @@ implements LogRenderer, ActionListener {
 
 		super.paint(g);
 
-		hr = hist_read.getHistories();
-		hw = hist_write.getHistories();
+		hr = storage_r.getHistories();
+		hw = storage_w.getHistories();
 		if (hr.length != hw.length) {
 			//更新中と思われるため、何もしない
 			return;

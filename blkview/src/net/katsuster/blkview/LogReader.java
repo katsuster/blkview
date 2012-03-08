@@ -4,21 +4,40 @@ package net.katsuster.blkview;
 import java.io.*;
 import java.net.*;
 
+import net.katsuster.blkview.AccessLog.LogType;
+
 /**
  * <p>
- * アクセスログを読み取り、レンダラに送るクラス。
+ * アクセスログを読み取り、ストレージに送るクラス。
  * 独自のスレッドで動作します。
  * </p>
  * 
  * @author katsuhiro
  */
 public class LogReader implements Runnable {
-	//private String path;
-	private LogRenderer renderer;
+	//ログファイルのパス
+	private String path;
+	//Read アクセスログの履歴を保存するストレージ
+	private LogStorage storage_r;
+	//Write アクセスログの履歴を保存するストレージ
+	private LogStorage storage_w;
 
-	public LogReader(String p, LogRenderer r) {
-		//path = p;
-		renderer = r;
+	public LogReader(String p, LogStorage s_r, LogStorage s_w, LogRenderer r) {
+		path = p;
+		storage_r = s_r;
+		storage_w = s_w;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public LogStorage getReadLogStorage() {
+		return storage_r;
+	}
+
+	public LogStorage getWriteLogStorage() {
+		return storage_w;
 	}
 
 	@Override
@@ -38,13 +57,8 @@ public class LogReader implements Runnable {
 	 * 
 	 * @throws IOException
 	 */
-	public void run_safe() throws IOException {
+	private void run_safe() throws IOException {
 		ServerSocket ss;
-		Socket s;
-		InputStream str;
-		DataInputStream in;
-		AccessLogOpen logh = new AccessLogOpen();
-		AccessLogRW log = new AccessLogRW();
 
 		try {
 			ss = new ServerSocket(10001, 5);
@@ -55,38 +69,77 @@ public class LogReader implements Runnable {
 
 		while (true) {
 			try {
-				s = ss.accept();
-				str = s.getInputStream();
-				System.out.println("accepted.");
-			} catch (IOException ex) {
-				throw new IllegalArgumentException(
-						"cannot accept.");
-			}/**/
-
-			/*try {
-				str = new FileInputStream(path);
-			} catch (IOException ex) {
-				throw new IllegalArgumentException(
-						"cannot access to '" + path + "'.");
-			}/**/
-
-			in = new DataInputStream(new BufferedInputStream(str));
-
-			logh.read(in);
-			renderer.setCapacity(logh.getCapacity());
-			System.out.println(
-					"capacity " + (logh.getCapacity() / 1048576) + "MB" + 
-							"(" + logh.getCapacity() + ")");
-
-			while (true) {
-				try {
-					log.read(in);
-				} catch (IllegalStateException ex) {
-					break;
-				}
-
-				renderer.addAccessLog(log);
+				acceptClient(ss);
+			} catch (IllegalStateException ex) {
+				System.err.println(ex);
+				ex.printStackTrace(System.err);
+				break;
 			}
+		}
+	}
+
+	private void acceptClient(ServerSocket ss) {
+		Socket s;
+		InputStream str;
+		DataInputStream in;
+		AccessLogOpen logh = new AccessLogOpen();
+
+		try {
+			s = ss.accept();
+			str = s.getInputStream();
+			System.out.println("accepted.");
+		} catch (IOException ex) {
+			throw new IllegalStateException(
+					"cannot accept.");
+		}/**/
+
+		/* try {
+			str = new FileInputStream(path);
+		} catch (IOException ex) {
+			throw new IllegalArgumentException(
+					"cannot access to '" + path + "'.");
+		}/**/
+
+		in = new DataInputStream(new BufferedInputStream(str));
+
+		logh.read(in);
+		storage_r.setCapacity(logh.getCapacity());
+		storage_w.setCapacity(logh.getCapacity());
+
+		System.out.println(
+				"capacity " + (logh.getCapacity() / 1048576) + "MB" + 
+						"(" + logh.getCapacity() + ")");
+
+		while (true) {
+			try {
+				receiveLog(in);
+			} catch (IllegalStateException ex) {
+				System.err.println(ex);
+				ex.printStackTrace(System.err);
+				break;
+			}
+		}
+	}
+
+	private void receiveLog(DataInputStream in) {
+		AccessLogRW log = new AccessLogRW();
+
+		try {
+			log.read(in);
+		} catch (IllegalStateException ex) {
+			throw new IllegalStateException(
+					"cannot receive logs.");
+		}
+
+		switch (log.getOp()) {
+		case LogType.READ:
+			//read
+			storage_r.addAccessLog(log.getAddress(), log.getSize());
+			break;
+		case LogType.WRITE:
+			//write
+			storage_w.addAccessLog(log.getAddress(), log.getSize());
+			break;
 		}
 	}
 }

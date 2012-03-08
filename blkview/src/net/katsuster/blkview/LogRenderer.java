@@ -2,11 +2,16 @@
 package net.katsuster.blkview;
 
 /**
+ * <p>
+ * ストレージに保持されているアクセスログの表示を行うインタフェースです。
+ * </p>
+ * 
  * @author katsuhiro
  */
 public interface LogRenderer {
-	public void setBlockCount(long n);
-	public void setCapacity(long n);
+	public void setReadLogStorage(LogStorage s);
+	public void setWriteLogStorage(LogStorage s);
 
-	public void addAccessLog(AccessLogRW log);
+	public void startRendering();
+	public void stopRendering();
 }
