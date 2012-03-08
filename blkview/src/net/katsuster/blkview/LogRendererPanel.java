@@ -165,6 +165,13 @@ implements LogRenderer, ActionListener {
 	 * @param height 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì‚‚³
 	 */
 	public void setBlockAreaSize(int width, int height) {
+		if (width <= 0 || height <= 0) {
+			throw new IllegalArgumentException(
+					"width(" + width + ") or " +
+					"height(" + height + ") is zero or negative.");
+
+		}
+
 		block_area = new Dimension(width, height);
 	}
 
