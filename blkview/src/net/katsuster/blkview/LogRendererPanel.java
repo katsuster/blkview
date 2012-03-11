@@ -168,7 +168,7 @@ implements LogRenderer, ActionListener {
 		if (width <= 0 || height <= 0) {
 			throw new IllegalArgumentException(
 					"width(" + width + ") or " +
-					"height(" + height + ") is zero or negative.");
+							"height(" + height + ") is zero or negative.");
 
 		}
 
@@ -242,7 +242,7 @@ implements LogRenderer, ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		int[] hr, hw;
-		Dimension d_ba;
+		Dimension d_c, d_ba;
 		Rectangle r_c, r_bc;
 		int mx, my, x, y, bx, by;
 		int i;
@@ -256,12 +256,17 @@ implements LogRenderer, ActionListener {
 			return;
 		}
 
-		//d_c = getAreaSize();
+		d_c = getAreaSize();
 		r_c = getContentBounds();
 		d_ba = getBlockAreaSize();
 		r_bc = getBlockContentBounds();
 		mx = r_c.width / d_ba.width;
 		my = r_c.height / d_ba.height;
+
+		//˜g
+		g.setColor(Color.GRAY);
+		g.drawRect(0, 0, d_c.width, d_c.height);
+
 		for (i = 0; i < hr.length; i++) {
 			x = (int)(i % mx);
 			y = (int)(i / mx);

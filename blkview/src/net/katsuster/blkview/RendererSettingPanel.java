@@ -26,10 +26,10 @@ implements ActionListener {
 	private JButton btn_cap;
 	private JPanel pnl_cap;
 
-	private JTextField txt_size_w;
-	private JTextField txt_size_h;
-	private JButton btn_size;
-	private JPanel pnl_size;
+	private JTextField txt_area_size_w;
+	private JTextField txt_area_size_h;
+	private JButton btn_area_size;
+	private JPanel pnl_area_size;
 
 	private JPanel pnl_list;
 
@@ -40,7 +40,7 @@ implements ActionListener {
 
 		renderer = r;
 
-		//
+		//ブロック数設定用のオブジェクト
 		txt_count = new JTextField(1);
 		btn_count = new JButton("set cnt");
 		btn_count.setActionCommand(ACTION_COMMAND.SET_COUNT);
@@ -50,7 +50,7 @@ implements ActionListener {
 		pnl_count.add(txt_count);
 		pnl_count.add(btn_count);
 
-		//
+		//容量設定用のオブジェクト
 		txt_cap = new JTextField(1);
 		btn_cap = new JButton("set cap");
 		btn_cap.setActionCommand(ACTION_COMMAND.SET_CAPACITY);
@@ -60,98 +60,155 @@ implements ActionListener {
 		pnl_cap.add(txt_cap);
 		pnl_cap.add(btn_cap);
 
-		//
-		txt_size_w = new JTextField(1);
-		txt_size_h = new JTextField(1);
-		btn_size = new JButton("set size");
-		btn_size.setActionCommand(ACTION_COMMAND.SET_SIZE);
-		btn_size.addActionListener(this);
-		pnl_size = new JPanel();
-		pnl_size.setLayout(new BoxLayout(pnl_size, BoxLayout.LINE_AXIS));
-		pnl_size.add(txt_size_w);
-		pnl_size.add(txt_size_h);
-		pnl_size.add(btn_size);
+		//全体の描画領域設定用のオブジェクト
+		txt_area_size_w = new JTextField(1);
+		txt_area_size_h = new JTextField(1);
+		btn_area_size = new JButton("set size");
+		btn_area_size.setActionCommand(ACTION_COMMAND.SET_SIZE);
+		btn_area_size.addActionListener(this);
+		pnl_area_size = new JPanel();
+		pnl_area_size.setLayout(new BoxLayout(pnl_area_size, BoxLayout.LINE_AXIS));
+		pnl_area_size.add(txt_area_size_w);
+		pnl_area_size.add(txt_area_size_h);
+		pnl_area_size.add(btn_area_size);
 
-		//
+		//設定用オブジェクトを整列させる
 		pnl_list = new JPanel();
 		pnl_list.setLayout(new BoxLayout(pnl_list, BoxLayout.PAGE_AXIS));
 		pnl_list.add(pnl_count);
 		pnl_list.add(pnl_cap);
-		pnl_list.add(pnl_size);
+		pnl_list.add(pnl_area_size);
 
-		//
+		//設定パネルをスクロール可能にする
 		scr_settings = new JScrollPane(pnl_list);
 
-		//
+		//パネルの中心に配置する
 		setLayout(new BorderLayout());
 		add(scr_settings, BorderLayout.CENTER);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		boolean correct;
-		int count;
-		int width, height;
-
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_COUNT)) {
-			correct = true;
-			count = 0;
-
-			try {
-				count = Integer.valueOf(txt_count.getText());
-			} catch (NumberFormatException ex) {
-				//do nothing
-			}
-			if (count <= 0 || 1000000 < count) {
-				correct = false;
-				txt_count.setForeground(Color.RED);
-			} else {
-				txt_count.setForeground(Color.BLACK);
-			}
-
-			if (correct) {
-				renderer.setBlockCount(count);
-			}
+			onSetBlockCount(e);
 		}
+
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_CAPACITY)) {
-			System.out.println("cap");
+			onSetCaption(e);
 		}
+
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_SIZE)) {
-			correct = true;
-			width = 0;
-			height = 0;
-
-			try {
-				width = Integer.valueOf(txt_size_w.getText());
-			} catch (NumberFormatException ex) {
-				//do nothing
-			}
-			if (width <= 0 || renderer.getAreaSize().width < width) {
-				correct = false;
-				txt_size_w.setForeground(Color.RED);
-			} else {
-				txt_size_w.setForeground(Color.BLACK);
-			}
-
-			try {
-				height = Integer.valueOf(txt_size_h.getText());
-			} catch (NumberFormatException ex) {
-				//do nothing
-			}
-			if (height <= 0 || renderer.getAreaSize().height < height) {
-				correct = false;
-				txt_size_h.setForeground(Color.RED);
-			} else {
-				txt_size_h.setForeground(Color.BLACK);
-			}
-
-			if (correct) {
-				renderer.setBlockAreaSize(width, height);
-			}
+			onSetAreaSize(e);
 		}
 
 		//再描画します
 		//repaint();
+	}
+
+	protected void onSetBlockCount(ActionEvent e) {
+		boolean correct;
+		int count;
+
+		correct = true;
+		count = 0;
+
+		try {
+			count = Integer.valueOf(txt_count.getText());
+		} catch (NumberFormatException ex) {
+			//do nothing
+		}
+		if (count <= 0 || 1000000 < count) {
+			correct = false;
+			txt_count.setForeground(Color.RED);
+		} else {
+			txt_count.setForeground(Color.BLACK);
+		}
+
+		if (correct) {
+			renderer.setBlockCount(count);
+		}
+	}
+
+	protected void onSetCaption(ActionEvent e) {
+
+	}
+
+	protected void onSetAreaSize(ActionEvent e) {
+		boolean correct;
+		int width, height;
+
+		correct = true;
+		width = 0;
+		height = 0;
+
+		try {
+			width = Integer.valueOf(txt_area_size_w.getText());
+		} catch (NumberFormatException ex) {
+			//do nothing
+		}
+		if (width <= renderer.getBlockAreaSize().width) {
+			correct = false;
+			txt_area_size_w.setForeground(Color.RED);
+		} else {
+			txt_area_size_w.setForeground(Color.BLACK);
+		}
+
+		try {
+			height = Integer.valueOf(txt_area_size_h.getText());
+		} catch (NumberFormatException ex) {
+			//do nothing
+		}
+		if (height <= renderer.getBlockAreaSize().height) {
+			correct = false;
+			txt_area_size_h.setForeground(Color.RED);
+		} else {
+			txt_area_size_h.setForeground(Color.BLACK);
+		}
+
+		if (correct) {
+			renderer.setAreaSize(width, height);
+			renderer.setContentMargin(5, 5, 5, 5);
+			renderer.setSize(width, height);
+			renderer.setPreferredSize(renderer.getSize());
+		}
+	}
+
+
+	protected void onSetBlockAreaSize(ActionEvent e) {
+		boolean correct;
+		int width, height;
+
+		correct = true;
+		width = 0;
+		height = 0;
+
+		try {
+			width = Integer.valueOf(txt_area_size_w.getText());
+		} catch (NumberFormatException ex) {
+			//do nothing
+		}
+		if (width <= 0 || renderer.getAreaSize().width < width) {
+			correct = false;
+			txt_area_size_w.setForeground(Color.RED);
+		} else {
+			txt_area_size_w.setForeground(Color.BLACK);
+		}
+
+		try {
+			height = Integer.valueOf(txt_area_size_h.getText());
+		} catch (NumberFormatException ex) {
+			//do nothing
+		}
+		if (height <= 0 || renderer.getAreaSize().height < height) {
+			correct = false;
+			txt_area_size_h.setForeground(Color.RED);
+		} else {
+			txt_area_size_h.setForeground(Color.BLACK);
+		}
+
+		if (correct) {
+			renderer.setBlockAreaSize(width, height);
+		}
 	}
 
 	public class ACTION_COMMAND {
