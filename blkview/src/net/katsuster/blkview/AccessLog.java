@@ -13,11 +13,11 @@ import java.io.*;
 public class AccessLog {
 	//アクセスログの種類（LogType クラスを参照のこと）
 	private int op;
-
+	
 	public AccessLog() {
 		//do nothing
 	}
-
+	
 	/**
 	 * <p>
 	 * ログの種類を取得します。
@@ -28,7 +28,7 @@ public class AccessLog {
 	public int getOp() {
 		return op;
 	}
-
+	
 	/**
 	 * <p>
 	 * バイトストリームからログを読み込む。
@@ -39,7 +39,7 @@ public class AccessLog {
 	public void read(DataInputStream in) {
 		read(in, this);
 	}
-
+	
 	/**
 	 * <p>
 	 * バイトストリームからログを読み込み、
@@ -56,7 +56,7 @@ public class AccessLog {
 			throw new IllegalStateException("I/O error.");
 		}
 	}
-
+	
 	/**
 	 * <p>
 	 * アクセスログのファクトリ関数。
@@ -72,7 +72,7 @@ public class AccessLog {
 	 */
 	public static AccessLog makeAccessLog(AccessLog h) {
 		AccessLog result;
-
+		
 		switch (h.getOp()) {
 		case LogType.OPEN:
 			result = new AccessLogOpen();
@@ -85,10 +85,10 @@ public class AccessLog {
 			result = new AccessLog();
 			break;
 		}
-
+		
 		return result;
 	}
-
+	
 	/**
 	 * <p>
 	 * ログの種類をあらわすクラス。

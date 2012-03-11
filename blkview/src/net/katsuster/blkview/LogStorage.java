@@ -35,7 +35,7 @@ public class LogStorage {
 	private long block_size_real;
 	//ブロックの読み込みアクセス履歴
 	private int[] block_hist;
-
+	
 	/**
 	 * <p>
 	 * ブロック数 1、容量 1 バイトのアクセスログ履歴を作成します。
@@ -44,7 +44,7 @@ public class LogStorage {
 	public LogStorage() {
 		this(1, 1);
 	}
-
+	
 	/**
 	 * <p>
 	 * 指定されたブロック数、容量のアクセスログ履歴を作成します。
@@ -56,7 +56,7 @@ public class LogStorage {
 	public LogStorage(int count, long cap) {
 		setGeometry(count, cap);
 	}
-
+	
 	/**
 	 * <p>
 	 * ブロック数を取得します。
@@ -67,7 +67,7 @@ public class LogStorage {
 	public int getBlockCount() {
 		return block_count_real;
 	}
-
+	
 	/**
 	 * <p>
 	 * ブロック数を設定します。
@@ -81,12 +81,12 @@ public class LogStorage {
 			throw new IllegalArgumentException(
 					"block count(" + cnt + ") is zero or negative.");
 		}
-
+		
 		block_count = cnt;
-
+		
 		resizeHistories();
 	}
-
+	
 	/**
 	 * <p>
 	 * 全体の容量（バイト数）を取得します。
@@ -97,7 +97,7 @@ public class LogStorage {
 	public long getCapacity() {
 		return capacity_real;
 	}
-
+	
 	/**
 	 * <p>
 	 * 全体の容量（バイト数）を設定します。
@@ -111,12 +111,12 @@ public class LogStorage {
 			throw new IllegalArgumentException(
 					"capacity(" + cap + ") is negative.");
 		}
-
+		
 		capacity = cap;
-
+		
 		resizeHistories();
 	}
-
+	
 	/**
 	 * <p>
 	 * ブロック数と、全体の容量（バイト数）を設定します。
@@ -135,13 +135,13 @@ public class LogStorage {
 			throw new IllegalArgumentException(
 					"capacity(" + cap + ") is negative.");
 		}
-
+		
 		block_count = cnt;
 		capacity = cap;
-
+		
 		resizeHistories();
 	}
-
+	
 	/**
 	 * <p>
 	 * 1ブロックのサイズを取得します。
@@ -152,7 +152,7 @@ public class LogStorage {
 	public long getBlockSize() {
 		return block_size_real;
 	}
-
+	
 	/**
 	 * <p>
 	 * 現在の容量、ブロック数を持つアクセスログ履歴を再作成します。
@@ -166,7 +166,7 @@ public class LogStorage {
 			block_hist = new int[getBlockCount()];
 		}
 	}
-
+	
 	/**
 	 * <p>
 	 * アクセスログを履歴に追加します。
@@ -178,23 +178,23 @@ public class LogStorage {
 	public void addAccessLog(long address, long size) {
 		long p_s, p_e;
 		long i;
-
+		
 		synchronized(this) {
 			p_s = address / getBlockSize();
 			p_e = (address + size) / getBlockSize();
-
+			
 			if (p_s < 0 || getBlockCount() <= p_e) {
 				throw new IllegalArgumentException(
 						String.format("address:%08x(block:%d-%d) is illegal.", 
 								address, p_s, p_e));
 			}
-
+			
 			for (i = p_s; i < p_e + 1; i++) {
 				block_hist[(int)i] = 0xff;
 			}
 		}
 	}
-
+	
 	/**
 	 * <p>
 	 * アクセスログの履歴を取得します。
@@ -205,7 +205,7 @@ public class LogStorage {
 	public int[] getHistories() {
 		return block_hist;
 	}
-
+	
 	/**
 	 * <p>
 	 * アクセスログの履歴を忘れさせます。
@@ -214,7 +214,7 @@ public class LogStorage {
 	public void forgetHistories() {
 		long i;
 		int t;
-
+		
 		synchronized(this) {
 			for (i = 0; i < getBlockCount(); i++) {
 				t = block_hist[(int)i];

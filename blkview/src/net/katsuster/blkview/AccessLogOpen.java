@@ -13,13 +13,13 @@ import java.io.*;
 public class AccessLogOpen extends AccessLog {
 	//ブロックデバイスの容量
 	private long capacity;
-
+	
 	public AccessLogOpen() {
 		super();
-
+		
 		//do nothing
 	}
-
+	
 	/**
 	 * <p>
 	 * ブロックデバイスの容量を取得します。
@@ -30,12 +30,12 @@ public class AccessLogOpen extends AccessLog {
 	public long getCapacity() {
 		return capacity;
 	}
-
+	
 	@Override
 	public void read(DataInputStream in) {
 		read(in, this);
 	}
-
+	
 	/**
 	 * <p>
 	 * バイトストリームからログを読み込み、
@@ -47,7 +47,7 @@ public class AccessLogOpen extends AccessLog {
 	 */
 	public static void read(DataInputStream in, AccessLogOpen d) {
 		AccessLog.read(in, d);
-
+		
 		try {
 			d.capacity = in.readLong();
 		} catch (IOException ex) {

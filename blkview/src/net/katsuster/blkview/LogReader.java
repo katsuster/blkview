@@ -21,25 +21,25 @@ public class LogReader implements Runnable {
 	private LogStorage storage_r;
 	//Write アクセスログの履歴を保存するストレージ
 	private LogStorage storage_w;
-
+	
 	public LogReader(String p, LogStorage s_r, LogStorage s_w, LogRenderer r) {
 		path = p;
 		storage_r = s_r;
 		storage_w = s_w;
 	}
-
+	
 	public String getPath() {
 		return path;
 	}
-
+	
 	public LogStorage getReadLogStorage() {
 		return storage_r;
 	}
-
+	
 	public LogStorage getWriteLogStorage() {
 		return storage_w;
 	}
-
+	
 	@Override
 	public void run() {
 		try {
@@ -49,7 +49,7 @@ public class LogReader implements Runnable {
 			ex.printStackTrace(System.err);
 		}
 	}
-
+	
 	/**
 	 * <p>
 	 * IOException のキャッチをさぼるための run() メソッド。
@@ -59,14 +59,14 @@ public class LogReader implements Runnable {
 	 */
 	private void run_safe() throws IOException {
 		ServerSocket ss;
-
+		
 		try {
 			ss = new ServerSocket(10001, 5);
 		} catch (IOException ex) {
 			throw new IllegalArgumentException(
 					"cannot bind to port '10001'.");
 		}/**/
-
+		
 		while (true) {
 			try {
 				acceptClient(ss);
@@ -77,13 +77,13 @@ public class LogReader implements Runnable {
 			}
 		}
 	}
-
+	
 	private void acceptClient(ServerSocket ss) {
 		Socket s;
 		InputStream str;
 		DataInputStream in;
 		AccessLogOpen logh = new AccessLogOpen();
-
+		
 		try {
 			s = ss.accept();
 			str = s.getInputStream();
@@ -92,24 +92,24 @@ public class LogReader implements Runnable {
 			throw new IllegalStateException(
 					"cannot accept.");
 		}/**/
-
+		
 		/* try {
 			str = new FileInputStream(path);
 		} catch (IOException ex) {
 			throw new IllegalArgumentException(
 					"cannot access to '" + path + "'.");
 		}/**/
-
+		
 		in = new DataInputStream(new BufferedInputStream(str));
-
+		
 		logh.read(in);
 		storage_r.setCapacity(logh.getCapacity());
 		storage_w.setCapacity(logh.getCapacity());
-
+		
 		System.out.println(
 				"capacity " + (logh.getCapacity() / 1048576) + "MB" + 
 						"(" + logh.getCapacity() + ")");
-
+		
 		while (true) {
 			try {
 				receiveLog(in);
@@ -120,17 +120,17 @@ public class LogReader implements Runnable {
 			}
 		}
 	}
-
+	
 	private void receiveLog(DataInputStream in) {
 		AccessLogRW log = new AccessLogRW();
-
+		
 		try {
 			log.read(in);
 		} catch (IllegalStateException ex) {
 			throw new IllegalStateException(
 					"cannot receive logs.");
 		}
-
+		
 		switch (log.getOp()) {
 		case LogType.READ:
 			//read

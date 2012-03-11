@@ -11,7 +11,7 @@ package net.katsuster.blkview;
 public interface LogRenderer {
 	public void setReadLogStorage(LogStorage s);
 	public void setWriteLogStorage(LogStorage s);
-
+	
 	public void startRendering();
 	public void stopRendering();
 }

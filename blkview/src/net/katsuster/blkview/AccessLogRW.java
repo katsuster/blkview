@@ -15,13 +15,13 @@ public class AccessLogRW extends AccessLog {
 	private long address;
 	//Read/Write のサイズ
 	private long size;
-
+	
 	public AccessLogRW() {
 		super();
-
+		
 		//do nothing
 	}
-
+	
 	/**
 	 * <p>
 	 * Read/Write のアドレスを取得します。
@@ -32,7 +32,7 @@ public class AccessLogRW extends AccessLog {
 	public long getAddress() {
 		return address;
 	}
-
+	
 	/**
 	 * <p>
 	 * Read/Write のサイズを取得します。
@@ -43,12 +43,12 @@ public class AccessLogRW extends AccessLog {
 	public long getSize() {
 		return size;
 	}
-
+	
 	@Override
 	public void read(DataInputStream in) {
 		read(in, this);
 	}
-
+	
 	/**
 	 * <p>
 	 * バイトストリームからログを読み込み、
@@ -60,7 +60,7 @@ public class AccessLogRW extends AccessLog {
 	 */
 	public static void read(DataInputStream in, AccessLogRW d) {
 		AccessLog.read(in, d);
-
+		
 		try {
 			d.address = in.readLong();
 			d.size = in.readLong();
