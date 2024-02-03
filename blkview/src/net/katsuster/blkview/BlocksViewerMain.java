@@ -5,9 +5,9 @@ import javax.swing.*;
 
 /**
  * <p>
- * ƒƒCƒ“ƒEƒCƒ“ƒhƒE‚ğì¬‚·‚éƒNƒ‰ƒX‚Å‚·B
+ * ãƒ¡ã‚¤ãƒ³ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆã™ã‚‹ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * </p>
- * 
+ *
  * @author katsuhiro
  */
 public class BlocksViewerMain {
@@ -23,49 +23,49 @@ public class BlocksViewerMain {
 		JComponent pnl_settings;
 		LogReader sender_inner;
 		Thread sender;
-		
+
 		if (args.length < 1) {
 			System.err.println(
-					"usage:\n" + 
+					"usage:\n" +
 					"blkview logfilename");
 			return;
 		}
-		
-		//Read/Write ƒAƒNƒZƒXƒƒO‚Ì—š—ğ‚ğ•Û‘¶—Ìˆæ‚ğì¬‚µ‚Ü‚·
+
+		//Read/Write ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®å±¥æ­´ã‚’ä¿å­˜é ˜åŸŸã‚’ä½œæˆã—ã¾ã™
 		storage_r = new LogStorage(1800, 1);
 		storage_w = new LogStorage(1800, 1);
-		
-		//ƒAƒNƒZƒXƒƒO•\¦—Ìˆæ‚ğì¬‚µ‚Ü‚·
+
+		//ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°è¡¨ç¤ºé ˜åŸŸã‚’ä½œæˆã—ã¾ã™
 		pnl_blocks = new LogRendererPanel(storage_r, storage_w);
-		
-		//ƒXƒNƒ[ƒ‹—Ìˆæ‚ğì¬‚µ‚Ü‚·
+
+		//ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«é ˜åŸŸã‚’ä½œæˆã—ã¾ã™
 		scr_blocks = new JScrollPane(pnl_blocks);
 		scr_blocks.setHorizontalScrollBarPolicy(
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scr_blocks.setVerticalScrollBarPolicy(
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		
-		//•\¦İ’è—Ìˆæ‚ğì¬‚µ‚Ü‚·
+
+
+		//è¡¨ç¤ºè¨­å®šé ˜åŸŸã‚’ä½œæˆã—ã¾ã™
 		pnl_settings = new RendererSettingPanel(pnl_blocks);
-		
-		
-		//•ªŠ„—Ìˆæ‚ğì¬‚µ‚Ü‚·
+
+
+		//åˆ†å‰²é ˜åŸŸã‚’ä½œæˆã—ã¾ã™
 		spl_main = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, false);
 		spl_main.setDividerSize(4);
 		spl_main.setLeftComponent(scr_blocks);
 		spl_main.setRightComponent(pnl_settings);
-		
-		//ƒƒCƒ“ƒEƒCƒ“ƒhƒE‚ğì¬‚µ‚Ü‚·
+
+		//ãƒ¡ã‚¤ãƒ³ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆã—ã¾ã™
 		frm_main = new JFrame();
 		frm_main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frm_main.setSize(800, 480);
-		
+
 		frm_main.add(spl_main);
-		
+
 		frm_main.setVisible(true);
-		
-		//—š—ğ“Ç‚İo‚µƒXƒŒƒbƒh‚ğì¬‚µ‚Ü‚·
+
+		//å±¥æ­´èª­ã¿å‡ºã—ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’ä½œæˆã—ã¾ã™
 		sender_inner = new LogReader(args[0], storage_r, storage_w, pnl_blocks);
 		sender = new Thread(sender_inner);
 		sender.start();

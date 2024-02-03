@@ -7,238 +7,238 @@ import javax.swing.*;
 
 /**
  * <p>
- * ƒXƒgƒŒ[ƒW‚É•Û‚³‚ê‚Ä‚¢‚éƒAƒNƒZƒXƒƒO‚Ì 2D•`‰æA•\¦‚ğs‚¤ƒNƒ‰ƒX‚Å‚·B
+ * ã‚¹ãƒˆãƒ¬ãƒ¼ã‚¸ã«ä¿æŒã•ã‚Œã¦ã„ã‚‹ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã® 2Dæç”»ã€è¡¨ç¤ºã‚’è¡Œã†ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * </p>
- * 
+ *
  * @author katsuhiro
  */
-public class LogRendererPanel extends JPanel 
+public class LogRendererPanel extends JPanel
 implements LogRenderer, ActionListener {
 	private static final long serialVersionUID = 1L;
-	
-	//“Ç‚İ‚İƒAƒNƒZƒXƒƒO‚Ì—š—ğ
+
+	//èª­ã¿è¾¼ã¿ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®å±¥æ­´
 	private LogStorage storage_r;
-	//‘‚«‚İƒAƒNƒZƒXƒƒO‚Ì—š—ğ
+	//æ›¸ãè¾¼ã¿ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®å±¥æ­´
 	private LogStorage storage_w;
-	
-	//‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‘å‚«‚³
+
+	//å…¨ä½“ã®æç”»é ˜åŸŸã®å¤§ãã•
 	private Dimension content_area;
-	//‘S‘Ì‚Ì•`‰æ—Ìˆæ
-	//i‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì¶ã‚ği0, 0j‚Æ‚·‚éj
+	//å…¨ä½“ã®æç”»é ˜åŸŸ
+	//ï¼ˆå…¨ä½“ã®æç”»é ˜åŸŸã®å·¦ä¸Šã‚’ï¼ˆ0, 0ï¼‰ã¨ã™ã‚‹ï¼‰
 	private Rectangle content_rect;
-	//ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‘å‚«‚³
+	//ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¤§ãã•
 	private Dimension block_area;
-	//ƒuƒƒbƒN‚ğ•`‰æ‚·‚é—Ìˆæ
-	//iƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì¶ã‚ğ (0, 0) ‚Æ‚·‚éj
+	//ãƒ–ãƒ­ãƒƒã‚¯ã‚’æç”»ã™ã‚‹é ˜åŸŸ
+	//ï¼ˆãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å·¦ä¸Šã‚’ (0, 0) ã¨ã™ã‚‹ï¼‰
 	private Rectangle block_rect;
-	
-	//—š—ğ‚ğ™X‚É–Y‚ê‚³‚¹‚Ä‚¢‚­ƒ^ƒCƒ}[
+
+	//å±¥æ­´ã‚’å¾ã€…ã«å¿˜ã‚Œã•ã›ã¦ã„ãã‚¿ã‚¤ãƒãƒ¼
 	private Timer leaper;
-	
+
 	public LogRendererPanel(LogStorage s_r, LogStorage s_w) {
 		super();
-		
+
 		setSize(new Dimension(640, 480));
 		setPreferredSize(getSize());
 		setBackground(Color.WHITE);
-		
+
 		setReadLogStorage(s_r);
 		setWriteLogStorage(s_w);
 		setBlockCount(5500);
-		
+
 		setAreaSize(getWidth(), getHeight());
 		setContentMargin(5, 5, 5, 5);
 		setBlockAreaSize(5, 9);
 		setBlockContentMargin(1, 1, 1, 1);
-		
+
 		leaper = new Timer(100, this);
 		startRendering();
 	}
-	
+
 	@Override
 	public void setReadLogStorage(LogStorage s) {
 		storage_r = s;
 	}
-	
+
 	@Override
 	public void setWriteLogStorage(LogStorage s) {
 		storage_w = s;
 	}
-	
+
 	public void setBlockCount(int n) {
 		storage_r.setBlockCount(n);
 		storage_w.setBlockCount(n);
 	}
-	
+
 	public Dimension getAreaSize() {
 		return (Dimension)content_area.clone();
 	}
-	
+
 	/**
 	 * <p>
-	 * ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì‘å‚«‚³‚ğw’è‚µ‚Ü‚·B
+	 * å…¨ä½“ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®å¤§ãã•ã‚’æŒ‡å®šã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param width ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì•
-	 * @param height ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì‚‚³
+	 *
+	 * @param width å…¨ä½“ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®å¹…
+	 * @param height å…¨ä½“ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®é«˜ã•
 	 */
 	public void setAreaSize(int width, int height) {
 		content_area = new Dimension(width, height);
 	}
-	
+
 	/**
 	 * <p>
-	 * ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚ğæ“¾‚µ‚Ü‚·B
+	 * å…¨ä½“ã®æç”»é ˜åŸŸã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * •`‰æŠJnˆÊ’u‚ÍA
-	 * ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚ÌisetAreaSize() ‚Åw’è‚·‚é—Ìˆæj
-	 * ¶ã‚ğ (0, 0) ‚Æ‚µ‚½A‘Š‘ÎÀ•W‚Å‚·B
+	 * æç”»é–‹å§‹ä½ç½®ã¯ã€
+	 * å…¨ä½“ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®ï¼ˆsetAreaSize() ã§æŒ‡å®šã™ã‚‹é ˜åŸŸï¼‰
+	 * å·¦ä¸Šã‚’ (0, 0) ã¨ã—ãŸã€ç›¸å¯¾åº§æ¨™ã§ã™ã€‚
 	 * </p>
-	 * 
-	 * @return ‘S‘Ì‚Ì•`‰æ—Ìˆæ
+	 *
+	 * @return å…¨ä½“ã®æç”»é ˜åŸŸ
 	 */
 	public Rectangle getContentBounds() {
 		return (Rectangle)content_rect.clone();
 	}
-	
+
 	/**
 	 * <p>
-	 * ŠJnÀ•WA•A‚‚³‚©‚çA‘S‘Ì‚Ì•`‰æ—Ìˆæ‚ğİ’è‚µ‚Ü‚·B
+	 * é–‹å§‹åº§æ¨™ã€å¹…ã€é«˜ã•ã‹ã‚‰ã€å…¨ä½“ã®æç”»é ˜åŸŸã‚’è¨­å®šã—ã¾ã™ã€‚
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * •`‰æŠJnˆÊ’u‚ÍA
-	 * ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚ÌisetAreaSize() ‚Åw’è‚·‚é—Ìˆæj
-	 * ¶ã‚ğ (0, 0) ‚Æ‚µ‚½A‘Š‘ÎÀ•W‚Å‚·B
+	 * æç”»é–‹å§‹ä½ç½®ã¯ã€
+	 * å…¨ä½“ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®ï¼ˆsetAreaSize() ã§æŒ‡å®šã™ã‚‹é ˜åŸŸï¼‰
+	 * å·¦ä¸Šã‚’ (0, 0) ã¨ã—ãŸã€ç›¸å¯¾åº§æ¨™ã§ã™ã€‚
 	 * </p>
-	 * 
-	 * @param x ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚ÌŠJn X À•W
-	 * @param y ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚ÌŠJn Y À•W
-	 * @param width ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì•
-	 * @param height ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‚‚³
+	 *
+	 * @param x å…¨ä½“ã®æç”»é ˜åŸŸã®é–‹å§‹ X åº§æ¨™
+	 * @param y å…¨ä½“ã®æç”»é ˜åŸŸã®é–‹å§‹ Y åº§æ¨™
+	 * @param width å…¨ä½“ã®æç”»é ˜åŸŸã®å¹…
+	 * @param height å…¨ä½“ã®æç”»é ˜åŸŸã®é«˜ã•
 	 */
 	public void setContentBounds(int x, int y, int width, int height) {
 		content_rect = new Rectangle(x, y, width, height);
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒ}[ƒWƒ“‚Ì‘å‚«‚³‚©‚çA‘S‘Ì‚Ì•`‰æ—Ìˆæ‚ğİ’è‚µ‚Ü‚·B
+	 * ãƒãƒ¼ã‚¸ãƒ³ã®å¤§ãã•ã‹ã‚‰ã€å…¨ä½“ã®æç”»é ˜åŸŸã‚’è¨­å®šã—ã¾ã™ã€‚
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚ÍA
-	 * ‘S‘Ì‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚©‚çAƒ}[ƒWƒ“‚ğœ‚¢‚½—Ìˆæ‚Æ‚È‚è‚Ü‚·B
+	 * å…¨ä½“ã®æç”»é ˜åŸŸã¯ã€
+	 * å…¨ä½“ã®æç”»é ˜åŸŸã®å¢ƒç•Œã‹ã‚‰ã€ãƒãƒ¼ã‚¸ãƒ³ã‚’é™¤ã„ãŸé ˜åŸŸã¨ãªã‚Šã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param left ƒ}[ƒWƒ“‚Ì¶‘¤•
-	 * @param top ƒ}[ƒWƒ“‚Ìã‘¤‚‚³
-	 * @param right ƒ}[ƒWƒ“‚Ì‰E‘¤•
-	 * @param bottom ƒ}[ƒWƒ“‚Ì‰º‘¤‚‚³
+	 *
+	 * @param left ãƒãƒ¼ã‚¸ãƒ³ã®å·¦å´å¹…
+	 * @param top ãƒãƒ¼ã‚¸ãƒ³ã®ä¸Šå´é«˜ã•
+	 * @param right ãƒãƒ¼ã‚¸ãƒ³ã®å³å´å¹…
+	 * @param bottom ãƒãƒ¼ã‚¸ãƒ³ã®ä¸‹å´é«˜ã•
 	 */
 	public void setContentMargin(int left, int top, int right, int bottom) {
 		Dimension d = getAreaSize();
-		
-		setContentBounds(left, top, 
+
+		setContentBounds(left, top,
 				d.width - left - right, d.height - top - bottom);
 	}
-	
+
 	/**
 	 * <p>
-	 * 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì‘å‚«‚³‚ğæ“¾‚µ‚Ü‚·B
+	 * 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®å¤§ãã•ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì‘å‚«‚³
+	 *
+	 * @return 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®å¤§ãã•
 	 */
 	public Dimension getBlockAreaSize() {
 		return (Dimension)block_area.clone();
 	}
-	
+
 	/**
 	 * <p>
-	 * 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì‘å‚«‚³‚ğæ“¾‚µ‚Ü‚·B
+	 * 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®å¤§ãã•ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param width 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì•
-	 * @param height 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚Ì‚‚³
+	 *
+	 * @param width 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®å¹…
+	 * @param height 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®é«˜ã•
 	 */
 	public void setBlockAreaSize(int width, int height) {
 		if (width <= 0 || height <= 0) {
 			throw new IllegalArgumentException(
 					"width(" + width + ") or " +
 							"height(" + height + ") is zero or negative.");
-			
+
 		}
-		
+
 		block_area = new Dimension(width, height);
 	}
-	
+
 	/**
 	 * <p>
-	 * 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚ğæ“¾‚µ‚Ü‚·B
+	 * 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * •`‰æŠJnˆÊ’u‚ÍA
-	 * 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚ÌisetBlockAreaSize() ‚Åw’è‚·‚é—Ìˆæj
-	 * ¶ã‚ğ (0, 0) ‚Æ‚µ‚½‘Š‘ÎÀ•W‚Å‚·B
+	 * æç”»é–‹å§‹ä½ç½®ã¯ã€
+	 * 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®ï¼ˆsetBlockAreaSize() ã§æŒ‡å®šã™ã‚‹é ˜åŸŸï¼‰
+	 * å·¦ä¸Šã‚’ (0, 0) ã¨ã—ãŸç›¸å¯¾åº§æ¨™ã§ã™ã€‚
 	 * </p>
-	 * 
-	 * @return 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ
+	 *
+	 * @return 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸ
 	 */
 	public Rectangle getBlockContentBounds() {
 		return (Rectangle)block_rect.clone();
 	}
-	
+
 	/**
 	 * <p>
-	 * ŠJnÀ•WA•A‚‚³‚©‚çA1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚ğİ’è‚µ‚Ü‚·B
+	 * é–‹å§‹åº§æ¨™ã€å¹…ã€é«˜ã•ã‹ã‚‰ã€1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã‚’è¨­å®šã—ã¾ã™ã€‚
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * •`‰æŠJnˆÊ’u‚ÍA
-	 * 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‹«ŠE‚ÌisetBlockAreaSize() ‚Åw’è‚·‚é—Ìˆæj
-	 * ¶ã‚ğ (0, 0) ‚Æ‚µ‚½‘Š‘ÎÀ•W‚Å‚·B
+	 * æç”»é–‹å§‹ä½ç½®ã¯ã€
+	 * 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¢ƒç•Œã®ï¼ˆsetBlockAreaSize() ã§æŒ‡å®šã™ã‚‹é ˜åŸŸï¼‰
+	 * å·¦ä¸Šã‚’ (0, 0) ã¨ã—ãŸç›¸å¯¾åº§æ¨™ã§ã™ã€‚
 	 * </p>
-	 * 
-	 * @param x 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚ÌŠJn X À•W
-	 * @param y 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚ÌŠJn Y À•W
-	 * @param width 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì•
-	 * @param height 1ƒuƒƒbƒN‚Ì•`‰æ—Ìˆæ‚Ì‚‚³
+	 *
+	 * @param x 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®é–‹å§‹ X åº§æ¨™
+	 * @param y 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®é–‹å§‹ Y åº§æ¨™
+	 * @param width 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®å¹…
+	 * @param height 1ãƒ–ãƒ­ãƒƒã‚¯ã®æç”»é ˜åŸŸã®é«˜ã•
 	 */
 	public void setBlockContentBounds(int x, int y, int width, int height) {
 		block_rect = new Rectangle(x, y, width, height);
 	}
-	
+
 	public void setBlockContentMargin(int left, int top, int right, int bottom) {
 		Dimension d = getBlockAreaSize();
-		
-		setBlockContentBounds(left, top, 
+
+		setBlockContentBounds(left, top,
 				d.width - left - right, d.height - top - bottom);
 	}
-	
+
 	@Override
 	public void startRendering() {
 		leaper.start();
 	}
-	
+
 	@Override
 	public void stopRendering() {
 		leaper.stop();
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//ƒAƒNƒZƒX—š—ğ‚ğ–Y‚ê‚³‚¹‚Ü‚·
+		//ã‚¢ã‚¯ã‚»ã‚¹å±¥æ­´ã‚’å¿˜ã‚Œã•ã›ã¾ã™
 		storage_r.forgetHistories();
 		storage_w.forgetHistories();
-		
-		//Ä•`‰æ‚µ‚Ü‚·
+
+		//å†æç”»ã—ã¾ã™
 		repaint();
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
 		int[] hr, hw;
@@ -246,48 +246,48 @@ implements LogRenderer, ActionListener {
 		Rectangle r_c, r_bc;
 		int mx, my, x, y, bx, by;
 		int i;
-		
+
 		super.paint(g);
-		
+
 		hr = storage_r.getHistories();
 		hw = storage_w.getHistories();
 		if (hr.length != hw.length) {
-			//XV’†‚Æv‚í‚ê‚é‚½‚ßA‰½‚à‚µ‚È‚¢
+			//æ›´æ–°ä¸­ã¨æ€ã‚ã‚Œã‚‹ãŸã‚ã€ä½•ã‚‚ã—ãªã„
 			return;
 		}
-		
+
 		d_c = getAreaSize();
 		r_c = getContentBounds();
 		d_ba = getBlockAreaSize();
 		r_bc = getBlockContentBounds();
 		mx = r_c.width / d_ba.width;
 		my = r_c.height / d_ba.height;
-		
-		//˜g
+
+		//æ 
 		g.setColor(Color.GRAY);
 		g.drawRect(0, 0, d_c.width, d_c.height);
-		
+
 		for (i = 0; i < hr.length; i++) {
 			x = (int)(i % mx);
 			y = (int)(i / mx);
 			if (y > my) {
-				//•`‰æ—ÌˆæŠO‚Ü‚Ås‚Á‚½‚Ì‚Å‚à‚¤•`‰æ‚Ì•K—v‚Í‚È‚¢
+				//æç”»é ˜åŸŸå¤–ã¾ã§è¡Œã£ãŸã®ã§ã‚‚ã†æç”»ã®å¿…è¦ã¯ãªã„
 				break;
 			}
-			
+
 			bx = r_c.x + x * d_ba.width;
 			by = r_c.y + y * d_ba.height;
-			
-			//˜g
+
+			//æ 
 			g.setColor(Color.GRAY);
-			g.drawRect(bx + r_bc.x, by + r_bc.y, 
+			g.drawRect(bx + r_bc.x, by + r_bc.y,
 					r_bc.width, r_bc.height);
-			//’†g
+			//ä¸­èº«
 			g.setColor(new Color(
-					255 - hr[i] & 0xff, 
-					255 - hw[i] & 0xff, 
+					255 - hr[i] & 0xff,
+					255 - hw[i] & 0xff,
 					255));
-			g.fillRect(bx + r_bc.x + 1, by + r_bc.y + 1, 
+			g.fillRect(bx + r_bc.x + 1, by + r_bc.y + 1,
 					r_bc.width - 1, r_bc.height - 1);
 		}
 	}

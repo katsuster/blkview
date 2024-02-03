@@ -5,49 +5,49 @@ import java.io.*;
 
 /**
  * <p>
- * ƒAƒNƒZƒXƒƒO‚ÌŠJn‚ğ‚ ‚ç‚í‚·ƒNƒ‰ƒX‚Å‚·B
+ * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®é–‹å§‹ã‚’ã‚ã‚‰ã‚ã™ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * </p>
- * 
+ *
  * @author katsuhiro
  */
 public class AccessLogOpen extends AccessLog {
-	//ƒuƒƒbƒNƒfƒoƒCƒX‚Ì—e—Ê
+	//ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒã‚¤ã‚¹ã®å®¹é‡
 	private long capacity;
-	
+
 	public AccessLogOpen() {
 		super();
-		
+
 		//do nothing
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒuƒƒbƒNƒfƒoƒCƒX‚Ì—e—Ê‚ğæ“¾‚µ‚Ü‚·B
+	 * ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒã‚¤ã‚¹ã®å®¹é‡ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return —e—Ê
+	 *
+	 * @return å®¹é‡
 	 */
 	public long getCapacity() {
 		return capacity;
 	}
-	
+
 	@Override
 	public void read(DataInputStream in) {
 		read(in, this);
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒoƒCƒgƒXƒgƒŠ[ƒ€‚©‚çƒƒO‚ğ“Ç‚İ‚İA
-	 * ƒAƒNƒZƒXƒƒO‚ÌŠJn‚Éİ’è‚µ‚Ü‚·B
+	 * ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰ãƒ­ã‚°ã‚’èª­ã¿è¾¼ã¿ã€
+	 * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®é–‹å§‹ã«è¨­å®šã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param in ƒoƒCƒgƒXƒgƒŠ[ƒ€
-	 * @param d “Ç‚İ‚ñ‚¾’l‚Ìİ’èæ‚Æ‚È‚éƒAƒNƒZƒXƒƒO
+	 *
+	 * @param in ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ 
+	 * @param d èª­ã¿è¾¼ã‚“ã å€¤ã®è¨­å®šå…ˆã¨ãªã‚‹ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°
 	 */
 	public static void read(DataInputStream in, AccessLogOpen d) {
 		AccessLog.read(in, d);
-		
+
 		try {
 			d.capacity = in.readLong();
 		} catch (IOException ex) {

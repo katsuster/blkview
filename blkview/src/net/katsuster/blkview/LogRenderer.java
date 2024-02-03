@@ -3,15 +3,15 @@ package net.katsuster.blkview;
 
 /**
  * <p>
- * ストレージに保持されているアクセスログの表示を行うインタフェースです。
+ * 繧ｹ繝医Ξ繝ｼ繧ｸ縺ｫ菫晄戟縺輔ｌ縺ｦ縺�繧九い繧ｯ繧ｻ繧ｹ繝ｭ繧ｰ縺ｮ陦ｨ遉ｺ繧定｡後≧繧､繝ｳ繧ｿ繝輔ぉ繝ｼ繧ｹ縺ｧ縺吶�
  * </p>
- * 
+ *
  * @author katsuhiro
  */
 public interface LogRenderer {
 	public void setReadLogStorage(LogStorage s);
 	public void setWriteLogStorage(LogStorage s);
-	
+
 	public void startRendering();
 	public void stopRendering();
 }

@@ -7,40 +7,40 @@ import javax.swing.*;
 
 /**
  * <p>
- * ƒAƒNƒZƒXƒƒO•`‰æ‚Ìİ’è‰æ–Ê‚ğ•\¦‚·‚éƒNƒ‰ƒX‚Å‚·B
+ * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°æç”»ã®è¨­å®šç”»é¢ã‚’è¡¨ç¤ºã™ã‚‹ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * </p>
- * 
+ *
  * @author katsuhiro
  */
-public class RendererSettingPanel extends JPanel 
+public class RendererSettingPanel extends JPanel
 implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	
+
 	private LogRendererPanel renderer;
-	
+
 	private JTextField txt_count;
 	private JButton btn_count;
 	private JPanel pnl_count;
-	
+
 	private JTextField txt_cap;
 	private JButton btn_cap;
 	private JPanel pnl_cap;
-	
+
 	private JTextField txt_area_size_w;
 	private JTextField txt_area_size_h;
 	private JButton btn_area_size;
 	private JPanel pnl_area_size;
-	
+
 	private JPanel pnl_list;
-	
+
 	private JScrollPane scr_settings;
-	
+
 	public RendererSettingPanel(LogRendererPanel r) {
 		super();
-		
+
 		renderer = r;
-		
-		//ƒuƒƒbƒN”İ’è—p‚ÌƒIƒuƒWƒFƒNƒg
+
+		//ãƒ–ãƒ­ãƒƒã‚¯æ•°è¨­å®šç”¨ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 		txt_count = new JTextField(1);
 		btn_count = new JButton("set cnt");
 		btn_count.setActionCommand(ACTION_COMMAND.SET_COUNT);
@@ -49,8 +49,8 @@ implements ActionListener {
 		pnl_count.setLayout(new BoxLayout(pnl_count, BoxLayout.LINE_AXIS));
 		pnl_count.add(txt_count);
 		pnl_count.add(btn_count);
-		
-		//—e—Êİ’è—p‚ÌƒIƒuƒWƒFƒNƒg
+
+		//å®¹é‡è¨­å®šç”¨ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 		txt_cap = new JTextField(1);
 		btn_cap = new JButton("set cap");
 		btn_cap.setActionCommand(ACTION_COMMAND.SET_CAPACITY);
@@ -59,8 +59,8 @@ implements ActionListener {
 		pnl_cap.setLayout(new BoxLayout(pnl_cap, BoxLayout.LINE_AXIS));
 		pnl_cap.add(txt_cap);
 		pnl_cap.add(btn_cap);
-		
-		//‘S‘Ì‚Ì•`‰æ—Ìˆæİ’è—p‚ÌƒIƒuƒWƒFƒNƒg
+
+		//å…¨ä½“ã®æç”»é ˜åŸŸè¨­å®šç”¨ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 		txt_area_size_w = new JTextField(1);
 		txt_area_size_h = new JTextField(1);
 		btn_area_size = new JButton("set size");
@@ -71,47 +71,47 @@ implements ActionListener {
 		pnl_area_size.add(txt_area_size_w);
 		pnl_area_size.add(txt_area_size_h);
 		pnl_area_size.add(btn_area_size);
-		
-		//İ’è—pƒIƒuƒWƒFƒNƒg‚ğ®—ñ‚³‚¹‚é
+
+		//è¨­å®šç”¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’æ•´åˆ—ã•ã›ã‚‹
 		pnl_list = new JPanel();
 		pnl_list.setLayout(new BoxLayout(pnl_list, BoxLayout.PAGE_AXIS));
 		pnl_list.add(pnl_count);
 		pnl_list.add(pnl_cap);
 		pnl_list.add(pnl_area_size);
-		
-		//İ’èƒpƒlƒ‹‚ğƒXƒNƒ[ƒ‹‰Â”\‚É‚·‚é
+
+		//è¨­å®šãƒ‘ãƒãƒ«ã‚’ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«å¯èƒ½ã«ã™ã‚‹
 		scr_settings = new JScrollPane(pnl_list);
-		
-		//ƒpƒlƒ‹‚Ì’†S‚É”z’u‚·‚é
+
+		//ãƒ‘ãƒãƒ«ã®ä¸­å¿ƒã«é…ç½®ã™ã‚‹
 		setLayout(new BorderLayout());
 		add(scr_settings, BorderLayout.CENTER);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_COUNT)) {
 			onSetBlockCount(e);
 		}
-		
+
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_CAPACITY)) {
 			onSetCaption(e);
 		}
-		
+
 		if (e.getActionCommand().equals(ACTION_COMMAND.SET_SIZE)) {
 			onSetAreaSize(e);
 		}
-		
-		//Ä•`‰æ‚µ‚Ü‚·
+
+		//å†æç”»ã—ã¾ã™
 		//repaint();
 	}
-	
+
 	protected void onSetBlockCount(ActionEvent e) {
 		boolean correct;
 		int count;
-		
+
 		correct = true;
 		count = 0;
-		
+
 		try {
 			count = Integer.valueOf(txt_count.getText());
 		} catch (NumberFormatException ex) {
@@ -123,24 +123,24 @@ implements ActionListener {
 		} else {
 			txt_count.setForeground(Color.BLACK);
 		}
-		
+
 		if (correct) {
 			renderer.setBlockCount(count);
 		}
 	}
-	
+
 	protected void onSetCaption(ActionEvent e) {
-		
+
 	}
-	
+
 	protected void onSetAreaSize(ActionEvent e) {
 		boolean correct;
 		int width, height;
-		
+
 		correct = true;
 		width = 0;
 		height = 0;
-		
+
 		try {
 			width = Integer.valueOf(txt_area_size_w.getText());
 		} catch (NumberFormatException ex) {
@@ -152,7 +152,7 @@ implements ActionListener {
 		} else {
 			txt_area_size_w.setForeground(Color.BLACK);
 		}
-		
+
 		try {
 			height = Integer.valueOf(txt_area_size_h.getText());
 		} catch (NumberFormatException ex) {
@@ -164,7 +164,7 @@ implements ActionListener {
 		} else {
 			txt_area_size_h.setForeground(Color.BLACK);
 		}
-		
+
 		if (correct) {
 			renderer.setAreaSize(width, height);
 			renderer.setContentMargin(5, 5, 5, 5);
@@ -172,16 +172,16 @@ implements ActionListener {
 			renderer.setPreferredSize(renderer.getSize());
 		}
 	}
-	
-	
+
+
 	protected void onSetBlockAreaSize(ActionEvent e) {
 		boolean correct;
 		int width, height;
-		
+
 		correct = true;
 		width = 0;
 		height = 0;
-		
+
 		try {
 			width = Integer.valueOf(txt_area_size_w.getText());
 		} catch (NumberFormatException ex) {
@@ -193,7 +193,7 @@ implements ActionListener {
 		} else {
 			txt_area_size_w.setForeground(Color.BLACK);
 		}
-		
+
 		try {
 			height = Integer.valueOf(txt_area_size_h.getText());
 		} catch (NumberFormatException ex) {
@@ -205,12 +205,12 @@ implements ActionListener {
 		} else {
 			txt_area_size_h.setForeground(Color.BLACK);
 		}
-		
+
 		if (correct) {
 			renderer.setBlockAreaSize(width, height);
 		}
 	}
-	
+
 	public class ACTION_COMMAND {
 		public static final String SET_COUNT = "set_cnt";
 		public static final String SET_CAPACITY = "set_capacity";

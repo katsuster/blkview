@@ -5,62 +5,62 @@ import java.io.*;
 
 /**
  * <p>
- * Read/Write ‚ÌƒAƒNƒZƒXƒƒO‚ğ‚ ‚ç‚í‚·ƒNƒ‰ƒX‚Å‚·B
+ * Read/Write ã®ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã‚’ã‚ã‚‰ã‚ã™ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * </p>
- * 
+ *
  * @author katsuhiro
  */
 public class AccessLogRW extends AccessLog {
-	//Read/Write æ‚ÌƒAƒhƒŒƒX
+	//Read/Write å…ˆã®ã‚¢ãƒ‰ãƒ¬ã‚¹
 	private long address;
-	//Read/Write ‚ÌƒTƒCƒY
+	//Read/Write ã®ã‚µã‚¤ã‚º
 	private long size;
-	
+
 	public AccessLogRW() {
 		super();
-		
+
 		//do nothing
 	}
-	
+
 	/**
 	 * <p>
-	 * Read/Write ‚ÌƒAƒhƒŒƒX‚ğæ“¾‚µ‚Ü‚·B
+	 * Read/Write ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return ƒAƒhƒŒƒX
+	 *
+	 * @return ã‚¢ãƒ‰ãƒ¬ã‚¹
 	 */
 	public long getAddress() {
 		return address;
 	}
-	
+
 	/**
 	 * <p>
-	 * Read/Write ‚ÌƒTƒCƒY‚ğæ“¾‚µ‚Ü‚·B
+	 * Read/Write ã®ã‚µã‚¤ã‚ºã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return ƒTƒCƒY
+	 *
+	 * @return ã‚µã‚¤ã‚º
 	 */
 	public long getSize() {
 		return size;
 	}
-	
+
 	@Override
 	public void read(DataInputStream in) {
 		read(in, this);
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒoƒCƒgƒXƒgƒŠ[ƒ€‚©‚çƒƒO‚ğ“Ç‚İ‚İA
-	 * Read/Write ‚ÌƒAƒNƒZƒXƒƒO‚Éİ’è‚µ‚Ü‚·B
+	 * ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰ãƒ­ã‚°ã‚’èª­ã¿è¾¼ã¿ã€
+	 * Read/Write ã®ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã«è¨­å®šã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param in ƒoƒCƒgƒXƒgƒŠ[ƒ€
-	 * @param d “Ç‚İ‚ñ‚¾’l‚Ìİ’èæ‚Æ‚È‚éƒAƒNƒZƒXƒƒO
+	 *
+	 * @param in ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ 
+	 * @param d èª­ã¿è¾¼ã‚“ã å€¤ã®è¨­å®šå…ˆã¨ãªã‚‹ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°
 	 */
 	public static void read(DataInputStream in, AccessLogRW d) {
 		AccessLog.read(in, d);
-		
+
 		try {
 			d.address = in.readLong();
 			d.size = in.readLong();

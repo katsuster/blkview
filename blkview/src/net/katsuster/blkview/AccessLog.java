@@ -5,49 +5,49 @@ import java.io.*;
 
 /**
  * <p>
- * ƒAƒNƒZƒXƒƒO‚ğ‚ ‚ç‚í‚·ƒNƒ‰ƒX‚Å‚·B
+ * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã‚’ã‚ã‚‰ã‚ã™ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
  * </p>
- * 
+ *
  * @author katsuhiro
  */
 public class AccessLog {
-	//ƒAƒNƒZƒXƒƒO‚Ìí—ŞiLogType ƒNƒ‰ƒX‚ğQÆ‚Ì‚±‚Æj
+	//ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®ç¨®é¡ï¼ˆLogType ã‚¯ãƒ©ã‚¹ã‚’å‚ç…§ã®ã“ã¨ï¼‰
 	private int op;
-	
+
 	public AccessLog() {
 		//do nothing
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒƒO‚Ìí—Ş‚ğæ“¾‚µ‚Ü‚·B
+	 * ãƒ­ã‚°ã®ç¨®é¡ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return ƒƒO‚Ìí—Ş
+	 *
+	 * @return ãƒ­ã‚°ã®ç¨®é¡
 	 */
 	public int getOp() {
 		return op;
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒoƒCƒgƒXƒgƒŠ[ƒ€‚©‚çƒƒO‚ğ“Ç‚İ‚ŞB
+	 * ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰ãƒ­ã‚°ã‚’èª­ã¿è¾¼ã‚€ã€‚
 	 * </p>
-	 * 
-	 * @param in ƒoƒCƒgƒXƒgƒŠ[ƒ€
+	 *
+	 * @param in ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ 
 	 */
 	public void read(DataInputStream in) {
 		read(in, this);
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒoƒCƒgƒXƒgƒŠ[ƒ€‚©‚çƒƒO‚ğ“Ç‚İ‚İA
-	 * ƒAƒNƒZƒXƒƒO‚Éİ’è‚µ‚Ü‚·B
+	 * ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰ãƒ­ã‚°ã‚’èª­ã¿è¾¼ã¿ã€
+	 * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã«è¨­å®šã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param in ƒoƒCƒgƒXƒgƒŠ[ƒ€
-	 * @param d “Ç‚İ‚ñ‚¾’l‚Ìİ’èæ‚Æ‚È‚éƒAƒNƒZƒXƒƒO
+	 *
+	 * @param in ãƒã‚¤ãƒˆã‚¹ãƒˆãƒªãƒ¼ãƒ 
+	 * @param d èª­ã¿è¾¼ã‚“ã å€¤ã®è¨­å®šå…ˆã¨ãªã‚‹ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°
 	 */
 	public static void read(DataInputStream in, AccessLog d) {
 		try {
@@ -56,23 +56,23 @@ public class AccessLog {
 			throw new IllegalStateException("I/O error.");
 		}
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒAƒNƒZƒXƒƒO‚Ìƒtƒ@ƒNƒgƒŠŠÖ”B
+	 * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®ãƒ•ã‚¡ã‚¯ãƒˆãƒªé–¢æ•°ã€‚
 	 * </p>
-	 * 
+	 *
 	 * <p>
-	 * ƒAƒNƒZƒXƒƒO‚Ìí—Ş‚É‰‚¶‚Ä“KØ‚ÈƒAƒNƒZƒXƒƒO
-	 * iŒp³ƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒXj‚ğì¬‚µ‚Ü‚·B
+	 * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®ç¨®é¡ã«å¿œã˜ã¦é©åˆ‡ãªã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°
+	 * ï¼ˆç¶™æ‰¿ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ï¼‰ã‚’ä½œæˆã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param h ƒAƒNƒZƒXƒƒO
-	 * @return ƒAƒNƒZƒXƒƒO‚Ìí—Ş‚É‰‚¶‚½Œp³ƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	 *
+	 * @param h ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°
+	 * @return ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®ç¨®é¡ã«å¿œã˜ãŸç¶™æ‰¿ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	 */
 	public static AccessLog makeAccessLog(AccessLog h) {
 		AccessLog result;
-		
+
 		switch (h.getOp()) {
 		case LogType.OPEN:
 			result = new AccessLogOpen();
@@ -85,15 +85,15 @@ public class AccessLog {
 			result = new AccessLog();
 			break;
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒƒO‚Ìí—Ş‚ğ‚ ‚ç‚í‚·ƒNƒ‰ƒXB
+	 * ãƒ­ã‚°ã®ç¨®é¡ã‚’ã‚ã‚‰ã‚ã™ã‚¯ãƒ©ã‚¹ã€‚
 	 * </p>
-	 * 
+	 *
 	 * @author katsuhiro
 	 */
 	public class LogType {

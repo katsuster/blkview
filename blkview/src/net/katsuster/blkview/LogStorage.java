@@ -3,128 +3,128 @@ package net.katsuster.blkview;
 
 /**
  * <p>
- * ƒAƒNƒZƒXƒƒO‚Ì—š—ğ‚ğ•Û‚·‚éƒXƒgƒŒ[ƒWƒNƒ‰ƒXB
- * —š—ğ‚ÍƒuƒƒbƒN‚²‚Æ‚É•Û‚³‚ê‚Ü‚·B
+ * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®å±¥æ­´ã‚’ä¿æŒã™ã‚‹ã‚¹ãƒˆãƒ¬ãƒ¼ã‚¸ã‚¯ãƒ©ã‚¹ã€‚
+ * å±¥æ­´ã¯ãƒ–ãƒ­ãƒƒã‚¯ã”ã¨ã«ä¿æŒã•ã‚Œã¾ã™ã€‚
  * </p>
- * 
+ *
  * <p>
- * ƒCƒ“ƒXƒ^ƒ“ƒX¶¬‚É setGeometry() ‚ÅƒuƒƒbƒN”‚ÆA
- * ‘S‘Ì‚Ì—e—Ê‚ğw’è‚µ‚Ü‚·B
- * 1 ƒuƒƒbƒN‚Ì‘å‚«‚³‚Í (‘S‘Ì‚Ì—e—Ê) / (ƒuƒƒbƒN”) + 1 ‚Éİ’è‚³‚êA
- * getBlockSize() ‚Åæ“¾‰Â”\‚Å‚·B
+ * ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆæ™‚ã« setGeometry() ã§ãƒ–ãƒ­ãƒƒã‚¯æ•°ã¨ã€
+ * å…¨ä½“ã®å®¹é‡ã‚’æŒ‡å®šã—ã¾ã™ã€‚
+ * 1 ãƒ–ãƒ­ãƒƒã‚¯ã®å¤§ãã•ã¯ (å…¨ä½“ã®å®¹é‡) / (ãƒ–ãƒ­ãƒƒã‚¯æ•°) + 1 ã«è¨­å®šã•ã‚Œã€
+ * getBlockSize() ã§å–å¾—å¯èƒ½ã§ã™ã€‚
  * </p>
- * 
+ *
  * <p>
- * “TŒ^“I‚Èg‚¢•û‚Í‰º‹L‚Ì‚Æ‚¨‚è‚Å‚·B
+ * å…¸å‹çš„ãªä½¿ã„æ–¹ã¯ä¸‹è¨˜ã®ã¨ãŠã‚Šã§ã™ã€‚
  * </p>
- * 
+ *
  * <ul>
- * <li>addAccessLog() ‚É‚ÄƒAƒNƒZƒXƒƒO‚ğ’Ç‰Á‚µ‚Ü‚·B</li>
- * <li>forgetAccessLog() ‚ğ’èŠú“I‚ÉŒÄ‚Ño‚·‚±‚Æ‚ÅA
- * ƒAƒNƒZƒXƒƒO‚ğ™X‚É–Y‚ê‚³‚¹‚Ü‚·B</li>
+ * <li>addAccessLog() ã«ã¦ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã‚’è¿½åŠ ã—ã¾ã™ã€‚</li>
+ * <li>forgetAccessLog() ã‚’å®šæœŸçš„ã«å‘¼ã³å‡ºã™ã“ã¨ã§ã€
+ * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã‚’å¾ã€…ã«å¿˜ã‚Œã•ã›ã¾ã™ã€‚</li>
  * </p>
- * 
+ *
  * @author katsuhiro
  */
 public class LogStorage {
-	//‘S‘Ì‚Ì—e—Ê
+	//å…¨ä½“ã®å®¹é‡
 	private long capacity, capacity_real;
-	//ƒuƒƒbƒN‚Ì”
+	//ãƒ–ãƒ­ãƒƒã‚¯ã®æ•°
 	private int block_count, block_count_real;
-	//ƒuƒƒbƒN‚ÌƒoƒCƒg”
+	//ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒã‚¤ãƒˆæ•°
 	private long block_size_real;
-	//ƒuƒƒbƒN‚Ì“Ç‚İ‚İƒAƒNƒZƒX—š—ğ
+	//ãƒ–ãƒ­ãƒƒã‚¯ã®èª­ã¿è¾¼ã¿ã‚¢ã‚¯ã‚»ã‚¹å±¥æ­´
 	private int[] block_hist;
-	
+
 	/**
 	 * <p>
-	 * ƒuƒƒbƒN” 1A—e—Ê 1 ƒoƒCƒg‚ÌƒAƒNƒZƒXƒƒO—š—ğ‚ğì¬‚µ‚Ü‚·B
+	 * ãƒ–ãƒ­ãƒƒã‚¯æ•° 1ã€å®¹é‡ 1 ãƒã‚¤ãƒˆã®ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°å±¥æ­´ã‚’ä½œæˆã—ã¾ã™ã€‚
 	 * </p>
 	 */
 	public LogStorage() {
 		this(1, 1);
 	}
-	
+
 	/**
 	 * <p>
-	 * w’è‚³‚ê‚½ƒuƒƒbƒN”A—e—Ê‚ÌƒAƒNƒZƒXƒƒO—š—ğ‚ğì¬‚µ‚Ü‚·B
+	 * æŒ‡å®šã•ã‚ŒãŸãƒ–ãƒ­ãƒƒã‚¯æ•°ã€å®¹é‡ã®ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°å±¥æ­´ã‚’ä½œæˆã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param count ƒuƒƒbƒN”
-	 * @param cap —e—Ê
+	 *
+	 * @param count ãƒ–ãƒ­ãƒƒã‚¯æ•°
+	 * @param cap å®¹é‡
 	 */
 	public LogStorage(int count, long cap) {
 		setGeometry(count, cap);
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒuƒƒbƒN”‚ğæ“¾‚µ‚Ü‚·B
+	 * ãƒ–ãƒ­ãƒƒã‚¯æ•°ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return ƒuƒƒbƒN”
+	 *
+	 * @return ãƒ–ãƒ­ãƒƒã‚¯æ•°
 	 */
 	public int getBlockCount() {
 		return block_count_real;
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒuƒƒbƒN”‚ğİ’è‚µ‚Ü‚·B
-	 * ƒuƒƒbƒNƒTƒCƒY‚Í“KØ‚È’l‚ÉÄİ’è‚³‚ê‚Ü‚·B
+	 * ãƒ–ãƒ­ãƒƒã‚¯æ•°ã‚’è¨­å®šã—ã¾ã™ã€‚
+	 * ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã¯é©åˆ‡ãªå€¤ã«å†è¨­å®šã•ã‚Œã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param cnt ƒuƒƒbƒN”
+	 *
+	 * @param cnt ãƒ–ãƒ­ãƒƒã‚¯æ•°
 	 */
 	public void setBlockCount(int cnt) {
 		if (cnt <= 0) {
 			throw new IllegalArgumentException(
 					"block count(" + cnt + ") is zero or negative.");
 		}
-		
+
 		block_count = cnt;
-		
+
 		resizeHistories();
 	}
-	
+
 	/**
 	 * <p>
-	 * ‘S‘Ì‚Ì—e—ÊiƒoƒCƒg”j‚ğæ“¾‚µ‚Ü‚·B
+	 * å…¨ä½“ã®å®¹é‡ï¼ˆãƒã‚¤ãƒˆæ•°ï¼‰ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return ‘S‘Ì‚Ì—e—Ê
+	 *
+	 * @return å…¨ä½“ã®å®¹é‡
 	 */
 	public long getCapacity() {
 		return capacity_real;
 	}
-	
+
 	/**
 	 * <p>
-	 * ‘S‘Ì‚Ì—e—ÊiƒoƒCƒg”j‚ğİ’è‚µ‚Ü‚·B
-	 * ƒuƒƒbƒNƒTƒCƒY‚Í“KØ‚È’l‚ÉÄİ’è‚³‚ê‚Ü‚·B
+	 * å…¨ä½“ã®å®¹é‡ï¼ˆãƒã‚¤ãƒˆæ•°ï¼‰ã‚’è¨­å®šã—ã¾ã™ã€‚
+	 * ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã¯é©åˆ‡ãªå€¤ã«å†è¨­å®šã•ã‚Œã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param cap ‘S‘Ì‚Ì—e—Ê
+	 *
+	 * @param cap å…¨ä½“ã®å®¹é‡
 	 */
 	public void setCapacity(long cap) {
 		if (cap < 0) {
 			throw new IllegalArgumentException(
 					"capacity(" + cap + ") is negative.");
 		}
-		
+
 		capacity = cap;
-		
+
 		resizeHistories();
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒuƒƒbƒN”‚ÆA‘S‘Ì‚Ì—e—ÊiƒoƒCƒg”j‚ğİ’è‚µ‚Ü‚·B
-	 * ƒuƒƒbƒNƒTƒCƒY‚Í“KØ‚È’l‚ÉÄİ’è‚³‚ê‚Ü‚·B
+	 * ãƒ–ãƒ­ãƒƒã‚¯æ•°ã¨ã€å…¨ä½“ã®å®¹é‡ï¼ˆãƒã‚¤ãƒˆæ•°ï¼‰ã‚’è¨­å®šã—ã¾ã™ã€‚
+	 * ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã¯é©åˆ‡ãªå€¤ã«å†è¨­å®šã•ã‚Œã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param cnt ƒuƒƒbƒN”
-	 * @param cap ‘S‘Ì‚Ì—e—Ê
+	 *
+	 * @param cnt ãƒ–ãƒ­ãƒƒã‚¯æ•°
+	 * @param cap å…¨ä½“ã®å®¹é‡
 	 */
 	public void setGeometry(int cnt, long cap) {
 		if (cnt <= 0) {
@@ -135,27 +135,27 @@ public class LogStorage {
 			throw new IllegalArgumentException(
 					"capacity(" + cap + ") is negative.");
 		}
-		
+
 		block_count = cnt;
 		capacity = cap;
-		
+
 		resizeHistories();
 	}
-	
+
 	/**
 	 * <p>
-	 * 1ƒuƒƒbƒN‚ÌƒTƒCƒY‚ğæ“¾‚µ‚Ü‚·B
+	 * 1ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚µã‚¤ã‚ºã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return 1ƒuƒƒbƒN‚ÌƒTƒCƒY
+	 *
+	 * @return 1ãƒ–ãƒ­ãƒƒã‚¯ã®ã‚µã‚¤ã‚º
 	 */
 	public long getBlockSize() {
 		return block_size_real;
 	}
-	
+
 	/**
 	 * <p>
-	 * Œ»İ‚Ì—e—ÊAƒuƒƒbƒN”‚ğ‚ÂƒAƒNƒZƒXƒƒO—š—ğ‚ğÄì¬‚µ‚Ü‚·B
+	 * ç¾åœ¨ã®å®¹é‡ã€ãƒ–ãƒ­ãƒƒã‚¯æ•°ã‚’æŒã¤ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°å±¥æ­´ã‚’å†ä½œæˆã—ã¾ã™ã€‚
 	 * </p>
 	 */
 	protected void resizeHistories() {
@@ -166,55 +166,55 @@ public class LogStorage {
 			block_hist = new int[getBlockCount()];
 		}
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒAƒNƒZƒXƒƒO‚ğ—š—ğ‚É’Ç‰Á‚µ‚Ü‚·B
+	 * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã‚’å±¥æ­´ã«è¿½åŠ ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @param address ƒAƒNƒZƒXæ‚ÌƒAƒhƒŒƒX
-	 * @param size ƒAƒNƒZƒX‚µ‚½ƒTƒCƒY
+	 *
+	 * @param address ã‚¢ã‚¯ã‚»ã‚¹å…ˆã®ã‚¢ãƒ‰ãƒ¬ã‚¹
+	 * @param size ã‚¢ã‚¯ã‚»ã‚¹ã—ãŸã‚µã‚¤ã‚º
 	 */
 	public void addAccessLog(long address, long size) {
 		long p_s, p_e;
 		long i;
-		
+
 		synchronized(this) {
 			p_s = address / getBlockSize();
 			p_e = (address + size) / getBlockSize();
-			
+
 			if (p_s < 0 || getBlockCount() <= p_e) {
 				throw new IllegalArgumentException(
-						String.format("address:%08x(block:%d-%d) is illegal.", 
+						String.format("address:%08x(block:%d-%d) is illegal.",
 								address, p_s, p_e));
 			}
-			
+
 			for (i = p_s; i < p_e + 1; i++) {
 				block_hist[(int)i] = 0xff;
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒAƒNƒZƒXƒƒO‚Ì—š—ğ‚ğæ“¾‚µ‚Ü‚·B
+	 * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®å±¥æ­´ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 * </p>
-	 * 
-	 * @return ƒAƒNƒZƒXƒƒO‚Ì—š—ğ
+	 *
+	 * @return ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®å±¥æ­´
 	 */
 	public int[] getHistories() {
 		return block_hist;
 	}
-	
+
 	/**
 	 * <p>
-	 * ƒAƒNƒZƒXƒƒO‚Ì—š—ğ‚ğ–Y‚ê‚³‚¹‚Ü‚·B
+	 * ã‚¢ã‚¯ã‚»ã‚¹ãƒ­ã‚°ã®å±¥æ­´ã‚’å¿˜ã‚Œã•ã›ã¾ã™ã€‚
 	 * </p>
 	 */
 	public void forgetHistories() {
 		long i;
 		int t;
-		
+
 		synchronized(this) {
 			for (i = 0; i < getBlockCount(); i++) {
 				t = block_hist[(int)i];
