@@ -48,8 +48,8 @@ implements LogRenderer, ActionListener {
 
 		setAreaSize(getWidth(), getHeight());
 		setContentMargin(5, 5, 5, 5);
-		setBlockAreaSize(5, 9);
-		setBlockContentMargin(1, 1, 1, 1);
+		setBlockAreaSize(4, 4);
+		setBlockContentMargin(0, 0, 0, 0);
 
 		leaper = new Timer(100, this);
 		startRendering();
