@@ -41,33 +41,33 @@ implements ActionListener {
 		renderer = r;
 
 		//ブロック数設定用のオブジェクト
-		txt_count = new JTextField(1);
+		txt_count = new JTextField(16);
 		btn_count = new JButton("set cnt");
 		btn_count.setActionCommand(ACTION_COMMAND.SET_COUNT);
 		btn_count.addActionListener(this);
 		pnl_count = new JPanel();
-		pnl_count.setLayout(new BoxLayout(pnl_count, BoxLayout.LINE_AXIS));
+		pnl_count.setLayout(new FlowLayout());
 		pnl_count.add(txt_count);
 		pnl_count.add(btn_count);
 
 		//容量設定用のオブジェクト
-		txt_cap = new JTextField(1);
+		txt_cap = new JTextField(16);
 		btn_cap = new JButton("set cap");
 		btn_cap.setActionCommand(ACTION_COMMAND.SET_CAPACITY);
 		btn_cap.addActionListener(this);
 		pnl_cap = new JPanel();
-		pnl_cap.setLayout(new BoxLayout(pnl_cap, BoxLayout.LINE_AXIS));
+		pnl_cap.setLayout(new FlowLayout());
 		pnl_cap.add(txt_cap);
 		pnl_cap.add(btn_cap);
 
 		//全体の描画領域設定用のオブジェクト
-		txt_area_size_w = new JTextField(1);
-		txt_area_size_h = new JTextField(1);
+		txt_area_size_w = new JTextField(16);
+		txt_area_size_h = new JTextField(16);
 		btn_area_size = new JButton("set size");
 		btn_area_size.setActionCommand(ACTION_COMMAND.SET_SIZE);
 		btn_area_size.addActionListener(this);
 		pnl_area_size = new JPanel();
-		pnl_area_size.setLayout(new BoxLayout(pnl_area_size, BoxLayout.LINE_AXIS));
+		pnl_area_size.setLayout(new FlowLayout());
 		pnl_area_size.add(txt_area_size_w);
 		pnl_area_size.add(txt_area_size_h);
 		pnl_area_size.add(btn_area_size);
